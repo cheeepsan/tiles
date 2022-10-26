@@ -1,7 +1,7 @@
 namespace Signals.UI
 {
-    public class BuildingButtonClickedSignal
+    public class BuildingButtonClickedSignal : IButtonClicked
     {
-        public string id;
+        public int id;
     }
 }

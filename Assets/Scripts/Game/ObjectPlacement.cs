@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Building;
 using JetBrains.Annotations;
+using Signals.UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using Util;
@@ -14,7 +15,9 @@ namespace Game
     public class ObjectPlacement : MonoBehaviour
     {
         [Inject] private Configuration conf;
-        private List<CfgBuilding> prefabs;
+        [Inject] private UiSignals _uiSignals;
+        
+        private List<CfgBuilding> _prefabs;
         
         [SerializeField] public GameObject _house;
 
@@ -26,15 +29,19 @@ namespace Game
         private RaycastHit _raycastHit;
 
         public static int TERRAIN_LAYER_MASK = 1 << 6; // todo, move to zenject
+
+
         
         void Start()
         {
-            prefabs = conf.GetCfgBuildingList();
-            foreach (var cfgBuilding in prefabs)
-            {
-                Debug.Log(cfgBuilding.path);
-            }
-            Debug.Log("PREFABS " + prefabs.Count());
+            _prefabs = conf.GetCfgBuildingList();
+            // foreach (var cfgBuilding in prefabs)
+            // {
+            //     Debug.Log(cfgBuilding.path);
+            // }
+            // Debug.Log("PREFABS " + prefabs.Count());
+
+            SubscribeToUiSignals();
         }
 
         void Update()
@@ -79,7 +86,8 @@ namespace Game
                 ))
             {
                 var currentPos = _raycastHit.transform.position;
-                var pos = new Vector3((currentPos.x),
+                var pos = new Vector3(
+                    (currentPos.x),
                     (currentPos.y) + 1,
                     (currentPos.z));
                 _currentPlaceableObject.transform.position = pos;
@@ -105,5 +113,36 @@ namespace Game
                 }
             }
         }
+
+        // Subscribes
+
+        private void SubscribeToUiSignals()
+        {
+            //_uiSignals.Subscribe<BuildingButtonClickedSignal>(SetCurrentBuilding);
+            
+            _uiSignals.Subscribe3<BuildingButtonClickedSignal, List<CfgBuilding>, GameObject>(
+                (x, b, o) => SetCurrentBuilding(x, b, o), _prefabs, _house);
+        }
+
+        private Action<BuildingButtonClickedSignal, List<CfgBuilding>, GameObject> SetCurrentBuilding = (s, l, o) =>
+        {
+            var id = s.id;
+            var p = l.Find(x => x.id == id);
+            var r = (GameObject)Resources.Load(p.path);
+            Debug.Log("Found: " + p.id + ", name: " + p.name + ", path: " + p.path );
+            Debug.Log(r);
+            Debug.Log(o);
+            // TODO GAME OBJECT TO WRAPPER?
+
+        };
+
+        /*
+        private Action<BuildingButtonClickedSignal> SetCurrentBuilding = signal =>
+        {
+            
+            Debug.Log("CLICKED ON: " + signal.id);
+        };
+        */
+        
     }
 }

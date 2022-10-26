@@ -8,7 +8,7 @@ namespace Util
     [System.Serializable]
     public class CfgBuilding : CfgInstance
     {
-        public string id;
+        public int id;
         public string name;
         public string path;
     }

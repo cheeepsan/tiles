@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Game;
+using Signals.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +13,7 @@ using Button = UnityEngine.UI.Button;
 public class UiRenderer : MonoBehaviour
 {
     [Inject] private Configuration _configuration;
+    [Inject] private UiSignals _uiSignalBus;
     void Start()
     {
         if (_configuration != null)
@@ -37,7 +40,10 @@ public class UiRenderer : MonoBehaviour
 
                     text.SetText(currentBuilding.name);
                     
-                    b.onClick.AddListener(() => { Debug.Log(currentBuilding.name);});
+                    b.onClick.AddListener(() =>
+                    {
+                        _uiSignalBus.FireBuildingButtonEvent(new BuildingButtonClickedSignal { id = currentBuilding.id});
+                    });
                 }
 
                 if (enumerator.MoveNext() == false)
@@ -47,6 +53,7 @@ public class UiRenderer : MonoBehaviour
             }
         }
     }
+    
     
     // Update is called once per frame
     void Update()

@@ -10,12 +10,15 @@ namespace Game
     {
         public override void InstallBindings()
         {
+
             SignalBusInstaller.Install(Container);
             
             Container.Bind<Configuration>().AsSingle().NonLazy();
-
+            Container.Bind<UiSignals>().AsSingle().NonLazy();
+            
             // https://github.com/modesttree/Zenject/blob/master/Documentation/Signals.md
             Container.DeclareSignal<BuildingButtonClickedSignal>();
+
         }
     }
     
