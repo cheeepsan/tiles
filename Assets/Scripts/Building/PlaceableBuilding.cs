@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Building
+namespace BuildingNS
 {
     public class PlaceableBuilding : MonoBehaviour // to interface
     {

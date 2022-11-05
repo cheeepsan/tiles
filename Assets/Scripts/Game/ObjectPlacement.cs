@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Building;
+using BuildingNS;
 using JetBrains.Annotations;
 using Signals.UI;
 using Unity.VisualScripting;
@@ -19,7 +19,8 @@ namespace Game
         
         private List<CfgBuilding> _prefabs;
         
-        [SerializeField] public GameObject _house;
+        //[SerializeField] public GameObject _house;
+        private Building _selectedObject;
 
         private GameObject _currentPlaceableObject = null;
         private PlaceableBuilding _currentPlaceableBuilding = null;
@@ -35,12 +36,10 @@ namespace Game
         void Start()
         {
             _prefabs = conf.GetCfgBuildingList();
-            // foreach (var cfgBuilding in prefabs)
-            // {
-            //     Debug.Log(cfgBuilding.path);
-            // }
-            // Debug.Log("PREFABS " + prefabs.Count());
+            var firstBuildingPath = _prefabs.First().path;
+            var fromResources = (GameObject)Resources.Load(firstBuildingPath);
 
+            _selectedObject = new Building(fromResources);
             SubscribeToUiSignals();
         }
 
@@ -65,7 +64,7 @@ namespace Game
                 Destroy(_currentPlaceableObject);
             }
 
-            GameObject gb = Instantiate(_house);
+            GameObject gb = Instantiate(_selectedObject.GetGameObject());
 
             _currentPlaceableObject = gb;
             _currentPlaceableBuilding = gb.GetComponentInChildren<PlaceableBuilding>();
@@ -120,20 +119,19 @@ namespace Game
         {
             //_uiSignals.Subscribe<BuildingButtonClickedSignal>(SetCurrentBuilding);
             
-            _uiSignals.Subscribe3<BuildingButtonClickedSignal, List<CfgBuilding>, GameObject>(
-                (x, b, o) => SetCurrentBuilding(x, b, o), _prefabs, _house);
+            _uiSignals.Subscribe3<BuildingButtonClickedSignal, List<CfgBuilding>, Building>(
+                (x, b, o) => SetCurrentBuilding(x, b, o), _prefabs, _selectedObject);
         }
 
-        private Action<BuildingButtonClickedSignal, List<CfgBuilding>, GameObject> SetCurrentBuilding = (s, l, o) =>
+        private Action<BuildingButtonClickedSignal, List<CfgBuilding>, Building> SetCurrentBuilding = (s, l, o) =>
         {
             var id = s.id;
             var p = l.Find(x => x.id == id);
             var r = (GameObject)Resources.Load(p.path);
+            o.SetGameObject(r);
             Debug.Log("Found: " + p.id + ", name: " + p.name + ", path: " + p.path );
             Debug.Log(r);
             Debug.Log(o);
-            // TODO GAME OBJECT TO WRAPPER?
-
         };
 
         /*
