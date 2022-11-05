@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BuildingNS;
+using Game.BuildingNS;
 using JetBrains.Annotations;
 using Signals.UI;
 using Unity.VisualScripting;
@@ -14,12 +15,12 @@ namespace Game
 {
     public class ObjectPlacement : MonoBehaviour
     {
-        [Inject] private Configuration conf;
-        [Inject] private UiSignals _uiSignals;
+        [Inject] private readonly Configuration conf;
+        [Inject] private readonly UiSignals _uiSignals;
+        [Inject] private readonly BuildingSignals _buildingSignals;
         
         private List<CfgBuilding> _prefabs;
-        
-        //[SerializeField] public GameObject _house;
+
         private Building _selectedObject;
 
         private GameObject _currentPlaceableObject = null;
@@ -36,20 +37,15 @@ namespace Game
         void Start()
         {
             _prefabs = conf.GetCfgBuildingList();
-            var firstBuildingPath = _prefabs.First().path;
-            var fromResources = (GameObject)Resources.Load(firstBuildingPath);
-
-            _selectedObject = new Building(fromResources);
+            var firstBuildingConf = _prefabs.First();
+            var fromResources = (GameObject)Resources.Load(firstBuildingConf.path);
+            
+            _selectedObject = new Building(fromResources, firstBuildingConf);
             SubscribeToUiSignals();
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F) && !_objectInPlacement) // todo move to subscribe?
-            {
-                SpawnPlaceableObject();
-            }
-
             if (_objectInPlacement && _currentPlaceableObject != null)
             {
                 Placement();
@@ -106,6 +102,14 @@ namespace Game
             {
                 if (_currentPlaceableBuilding.canBuild)
                 {
+                    BuildingPlacedSignal buildingPlacedSignal = new BuildingPlacedSignal
+                    {
+                        placedTimestamp = DateTime.Now,
+                        buildingConfig = _selectedObject.GetBuildingConfiguration(),
+                        pos = _currentPlaceableObject.transform.position
+                    };
+                    _buildingSignals.FireBuildingPlacedEvent(buildingPlacedSignal);
+                    
                     _objectInPlacement = false;
                     _currentPlaceableObject = null;
                     _currentPlaceableBuilding = null;
@@ -117,30 +121,21 @@ namespace Game
 
         private void SubscribeToUiSignals()
         {
-            //_uiSignals.Subscribe<BuildingButtonClickedSignal>(SetCurrentBuilding);
+            Action afterClick = SpawnPlaceableObject;
             
-            _uiSignals.Subscribe3<BuildingButtonClickedSignal, List<CfgBuilding>, Building>(
-                (x, b, o) => SetCurrentBuilding(x, b, o), _prefabs, _selectedObject);
+            _uiSignals.Subscribe4<BuildingButtonClickedSignal, List<CfgBuilding>, Building, Action>(
+                (x, b, o, a) => 
+                    SetCurrentBuilding(x, b, o, a), _prefabs, _selectedObject, afterClick);
         }
 
-        private Action<BuildingButtonClickedSignal, List<CfgBuilding>, Building> SetCurrentBuilding = (s, l, o) =>
+        private Action<BuildingButtonClickedSignal, List<CfgBuilding>, Building, Action> SetCurrentBuilding = (s, l, o, a) =>
         {
-            var id = s.id;
-            var p = l.Find(x => x.id == id);
-            var r = (GameObject)Resources.Load(p.path);
-            o.SetGameObject(r);
-            Debug.Log("Found: " + p.id + ", name: " + p.name + ", path: " + p.path );
-            Debug.Log(r);
-            Debug.Log(o);
-        };
-
-        /*
-        private Action<BuildingButtonClickedSignal> SetCurrentBuilding = signal =>
-        {
+            var rGameObject = (GameObject)Resources.Load(s.buildingConf.path);
+            o.SetBuildingConfiguration(s.buildingConf);
+            o.SetGameObject(rGameObject);
             
-            Debug.Log("CLICKED ON: " + signal.id);
+            a.Invoke();
         };
-        */
         
     }
 }

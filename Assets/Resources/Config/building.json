@@ -2,17 +2,20 @@
   {
     "id": 1,
     "name": "House",
-    "path": "Tiles/Buildings/House"
+    "path": "Tiles/Buildings/House",
+    "type": "palace"
   },
   {
     "id": 2,
     "name": "House1",
-    "path": "Tiles/Buildings/House_1"
+    "path": "Tiles/Buildings/House_1",
+    "type": "farm"
   },
   {
     "id": 3,
     "name": "House2",
-    "path": "Tiles/Buildings/House_2"
+    "path": "Tiles/Buildings/House_2",
+    "type": "shop"
   }
 ]
   

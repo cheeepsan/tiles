@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Signals.UI;
 using UnityEngine;
 using Zenject;
@@ -7,7 +8,7 @@ namespace Game
 {
     public class UiSignals : IInitializable
     {
-        readonly SignalBus _uiSignalBus;
+        private readonly SignalBus _uiSignalBus;
 
         public UiSignals(SignalBus uiSignalBus)
         {
@@ -37,6 +38,11 @@ namespace Game
         public void Subscribe3<IButtonClicked, T, TA>(Action<IButtonClicked, T, TA> actionOnFire, T a, TA a1)
         {
             _uiSignalBus.Subscribe(typeof(IButtonClicked), (obj) => { actionOnFire((IButtonClicked)obj, a, a1); });
+        }
+        
+        public void Subscribe4<IButtonClicked, T, TA, Action>(Action<IButtonClicked, T, TA, Action> actionOnFire, T a, TA a1, Action after)
+        {
+            _uiSignalBus.Subscribe(typeof(IButtonClicked), (obj) => { actionOnFire((IButtonClicked)obj, a, a1, after); });
         }
     }
 }

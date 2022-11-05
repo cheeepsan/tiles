@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game;
+using Game.BuildingNS;
 using Signals.UI;
 using TMPro;
 using UnityEngine;
@@ -14,12 +16,19 @@ public class UiRenderer : MonoBehaviour
 {
     [Inject] private Configuration _configuration;
     [Inject] private UiSignals _uiSignalBus;
+    [Inject] private BuildingSignals _buildingSignalBus;
+    [Inject] private BuildingManager _buildingManager;
+
+    private TMP_Text _infoWindow;
+    
     void Start()
     {
         if (_configuration != null)
         {
             Instantiate();
         }
+
+        SubscribeToSignals();
     }
 
     public void Instantiate()
@@ -42,7 +51,7 @@ public class UiRenderer : MonoBehaviour
                     
                     b.onClick.AddListener(() =>
                     {
-                        _uiSignalBus.FireBuildingButtonEvent(new BuildingButtonClickedSignal { id = currentBuilding.id});
+                        _uiSignalBus.FireBuildingButtonEvent(new BuildingButtonClickedSignal { buildingConf = currentBuilding });
                     });
                 }
 
@@ -51,9 +60,23 @@ public class UiRenderer : MonoBehaviour
                     break;
                 }
             }
+            
+            var info = GameObject.FindGameObjectWithTag("info");
+            _infoWindow = info.GetComponent<TMP_Text>();
+            _infoWindow.SetText("Window ready");
         }
     }
-    
+
+    private void UpdateInfoWindow()
+    {
+        string buildingManagerStatus = _buildingManager.GetStateInfo();
+        _infoWindow.SetText(buildingManagerStatus);
+    }
+    private void SubscribeToSignals()
+    {
+        Action onBuildingSignal = UpdateInfoWindow;
+        _buildingSignalBus.Subscribe<BuildingPlacedSignal>(onBuildingSignal);
+    }
     
     // Update is called once per frame
     void Update()

@@ -1,6 +1,7 @@
 using Zenject;
 using UnityEngine;
 using System.Collections;
+using Game.BuildingNS;
 using Signals.UI;
 using Util;
 
@@ -14,12 +15,21 @@ namespace Game
             SignalBusInstaller.Install(Container);
             
             Container.Bind<Configuration>().AsSingle().NonLazy();
-            Container.Bind<UiSignals>().AsSingle().NonLazy();
             
-            // https://github.com/modesttree/Zenject/blob/master/Documentation/Signals.md
-            Container.DeclareSignal<BuildingButtonClickedSignal>();
+            Container.Bind<UiSignals>().AsSingle().NonLazy();
+            Container.Bind<BuildingSignals>().AsSingle().NonLazy();
+    
 
+
+            Container.DeclareSignal<BuildingButtonClickedSignal>();
+            Container.DeclareSignal<BuildingPlacedSignal>();
+   
+            //BindSignalBuses();
+            //DeclareSignals();
+   
+          
         }
+
     }
     
 
