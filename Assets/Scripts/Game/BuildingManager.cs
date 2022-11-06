@@ -2,26 +2,32 @@ using System;
 using System.Collections.Generic;
 using BuildingNS;
 using Game.BuildingNS;
-using Zenject;
 
 namespace Game
 {
-    // TODO: Init building manager on start
-    public class BuildingManager : IInitializable
+    public class BuildingManager 
     {
-        [Inject] private readonly BuildingSignals _buildingSignals;
+        private readonly BuildingSignals _buildingSignals;
 
         private Dictionary<string, Building> _placedBuildings;
         
-        public BuildingManager()
+        public BuildingManager(BuildingSignals buildingSignals)
         {
             _placedBuildings = new Dictionary<string, Building>();
-            
+            _buildingSignals = buildingSignals;
+            SubscribeOnBuildingPlacedEvent();
         }
 
         public string GetStateInfo()
         {
-            return $"Building amount: {_placedBuildings.Count} \n";
+            var buildingsString = $"Building amount: {_placedBuildings.Count} \n";
+            
+            foreach (var keyValue in _placedBuildings)
+            {
+                buildingsString += $"{keyValue.Key} : {keyValue.Value.GetBuildingConfiguration().ToString()} \n";
+            }
+
+            return buildingsString;
         }
 
         private void SubscribeOnBuildingPlacedEvent()
@@ -37,10 +43,5 @@ namespace Game
             Building building = new Building(s.buildingConfig);
             d.Add(uuid, building);
         };
-
-        public void Initialize()
-        {
-            SubscribeOnBuildingPlacedEvent();
-        }
     }
 }

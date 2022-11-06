@@ -108,6 +108,8 @@ namespace Game
                         buildingConfig = _selectedObject.GetBuildingConfiguration(),
                         pos = _currentPlaceableObject.transform.position
                     };
+                    
+                    _currentPlaceableBuilding.Place();
                     _buildingSignals.FireBuildingPlacedEvent(buildingPlacedSignal);
                     
                     _objectInPlacement = false;

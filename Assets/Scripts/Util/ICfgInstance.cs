@@ -12,5 +12,10 @@ namespace Util
         public string name;
         public string path;
         public string type;
+
+        public override string ToString()
+        {
+            return $"id: {id}, name: {name}, path: {path}, type: {type}";
+        }
     }
 }

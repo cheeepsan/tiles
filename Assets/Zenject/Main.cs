@@ -15,19 +15,12 @@ namespace Game
             SignalBusInstaller.Install(Container);
             
             Container.Bind<Configuration>().AsSingle().NonLazy();
-            
+            Container.Bind<BuildingManager>().AsSingle().NonLazy();
             Container.Bind<UiSignals>().AsSingle().NonLazy();
             Container.Bind<BuildingSignals>().AsSingle().NonLazy();
-    
-
-
+            
             Container.DeclareSignal<BuildingButtonClickedSignal>();
             Container.DeclareSignal<BuildingPlacedSignal>();
-   
-            //BindSignalBuses();
-            //DeclareSignals();
-   
-          
         }
 
     }

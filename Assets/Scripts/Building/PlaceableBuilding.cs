@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace BuildingNS
@@ -6,14 +7,41 @@ namespace BuildingNS
     public class PlaceableBuilding : MonoBehaviour // to interface
     {
         public bool canBuild;
-        
+        private int builtPercentage = 0;
+
         private void Start()
         {
             canBuild = true;
             Debug.Log("Building created");
         }
+        
+        public void Place()
+        {
+            IEnumerator coroutine = BuildingProcess();
+            StartCoroutine(coroutine);
+        }
 
+        public void OnGUI()
+        {
 
+            Vector2 targetPos;
+            targetPos = Camera.main.WorldToScreenPoint(transform.position);
+
+            float yOffset = 60; // not fixed? 
+            float xOffset = 30;
+
+            GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), builtPercentage + "/" + 100);
+        }
+
+        private IEnumerator BuildingProcess()
+        {
+            while (builtPercentage != 100)
+            {
+                builtPercentage += 1;
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+        
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.layer != 6)
