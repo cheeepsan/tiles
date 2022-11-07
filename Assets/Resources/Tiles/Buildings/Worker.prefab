@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4838361046283726416}
   m_Layer: 0
-  m_Name: House_1
+  m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,7 +96,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 99c84857c37116947bc57d1065c4aae2, type: 2}
+  - {fileID: 2100000, guid: 2efdd01dd5d7c8b42bf1b6439afc5d8d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
