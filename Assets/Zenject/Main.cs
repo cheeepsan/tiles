@@ -1,7 +1,7 @@
 using Zenject;
 using UnityEngine;
 using System.Collections;
-using Game.BuildingNS;
+using Signals.Building;
 using Signals.UI;
 using Util;
 

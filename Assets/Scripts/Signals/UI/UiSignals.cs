@@ -4,7 +4,7 @@ using Signals.UI;
 using UnityEngine;
 using Zenject;
 
-namespace Game
+namespace Signals.UI
 {
     public class UiSignals : IInitializable
     {

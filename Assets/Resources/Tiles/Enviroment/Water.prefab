@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 654311935051704678}
-  m_Layer: 6
-  m_Name: Ground
+  m_Layer: 0
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 378968729616584037}
   - component: {fileID: 8654525560290051719}
   - component: {fileID: 7531953608324757210}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dfc6ca85b5caa7c4f9c4a8d63c9e0b4e, type: 2}
+  - {fileID: 2100000, guid: b59def8bc7fb8614b98e4b08c0cc9745, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

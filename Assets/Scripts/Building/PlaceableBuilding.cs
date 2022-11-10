@@ -1,14 +1,17 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Util;
 
 namespace BuildingNS
 {
     public class PlaceableBuilding : MonoBehaviour // to interface
     {
         public bool canBuild;
-        private int builtPercentage = 0;
-
+        private int _builtPercentage = 0;
+        private CfgBuilding _buildingConfig;
+        private bool _isBuilt = false;
+        
         private void Start()
         {
             canBuild = true;
@@ -21,6 +24,11 @@ namespace BuildingNS
             StartCoroutine(coroutine);
         }
 
+        public void SetBuildingConfig(CfgBuilding buildingCfg)
+        {
+            _buildingConfig = buildingCfg;
+        }
+        
         public void OnGUI()
         {
 
@@ -30,15 +38,31 @@ namespace BuildingNS
             float yOffset = 60; // not fixed? 
             float xOffset = 30;
 
-            GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), builtPercentage + "/" + 100);
+            GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
         }
 
         private IEnumerator BuildingProcess()
         {
-            while (builtPercentage != 100)
+            while (_builtPercentage != 100)
             {
-                builtPercentage += 1;
-                yield return new WaitForSeconds(0.2f);
+                _builtPercentage += 1;
+                yield return new WaitForSeconds(0.01f);
+            }
+
+            _isBuilt = true;
+            SpawnWorker();
+        }
+
+        private void SpawnWorker()
+        {
+            if (_buildingConfig.unit != null)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var rGameObject = (GameObject)Resources.Load(_buildingConfig.unit.path);
+                    Instantiate(rGameObject, this.transform);
+                }
+  
             }
         }
         

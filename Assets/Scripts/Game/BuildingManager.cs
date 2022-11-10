@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BuildingNS;
-using Game.BuildingNS;
+using Signals.Building;
 
 namespace Game
 {

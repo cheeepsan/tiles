@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Util;
 
-namespace Game.BuildingNS
+namespace Signals.Building
 {
     public class BuildingPlacedSignal: IBuildingSignal
     {

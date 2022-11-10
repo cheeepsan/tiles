@@ -9,7 +9,11 @@
     "id": 2,
     "name": "Farm",
     "path": "Tiles/Buildings/Farm",
-    "type": "farm"
+    "type": "farm",
+    "unit": {
+      "name": "farmer",
+      "path": "Tiles/Creatures/Person"
+    }
   },
   {
     "id": 3,

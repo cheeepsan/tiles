@@ -51,11 +51,11 @@ namespace CameraNS
             velocity += GetAccelerationVector() * Time.deltaTime;
 
             // Rotation
-            Vector2 mouseDelta = lookSensitivity * new Vector2(Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
-            Quaternion rotation = transform.rotation;
-            Quaternion horiz = Quaternion.AngleAxis(mouseDelta.x, Vector3.up);
-            Quaternion vert = Quaternion.AngleAxis(mouseDelta.y, Vector3.right);
-            transform.rotation = horiz * rotation * vert;
+            // Vector2 mouseDelta = lookSensitivity * new Vector2(Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
+            // Quaternion rotation = transform.rotation;
+            // Quaternion horiz = Quaternion.AngleAxis(mouseDelta.x, Vector3.up);
+            // Quaternion vert = Quaternion.AngleAxis(mouseDelta.y, Vector3.right);
+            // transform.rotation = horiz * rotation * vert;
 
             // Leave cursor lock
             if (Input.GetKeyDown(KeyCode.Escape))

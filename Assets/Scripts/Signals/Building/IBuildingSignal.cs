@@ -1,4 +1,4 @@
-namespace Game.BuildingNS
+namespace Signals.Building
 {
     public interface IBuildingSignal
     {

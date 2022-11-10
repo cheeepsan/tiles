@@ -3,7 +3,7 @@ using BuildingNS;
 using UnityEngine;
 using Zenject;
 
-namespace Game.BuildingNS
+namespace Signals.Building
 {
     public class BuildingSignals : IInitializable
     {

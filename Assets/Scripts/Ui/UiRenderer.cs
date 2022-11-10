@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game;
-using Game.BuildingNS;
+using Signals.Building;
 using Signals.UI;
 using TMPro;
 using UnityEngine;

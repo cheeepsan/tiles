@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BuildingNS;
-using Game.BuildingNS;
+using Signals.Building;
 using JetBrains.Annotations;
 using Signals.UI;
 using Unity.VisualScripting;
@@ -64,7 +64,8 @@ namespace Game
 
             _currentPlaceableObject = gb;
             _currentPlaceableBuilding = gb.GetComponentInChildren<PlaceableBuilding>();
-
+            _currentPlaceableBuilding.SetBuildingConfig(_selectedObject.GetBuildingConfiguration()); // TODO: Unify Building and PlaceableBuilding?    
+            
             var position = _currentPlaceableObject.transform.position;
             position.Set(position.x, 1f, position.z);
             _currentPlaceableObject.transform.position = position;
