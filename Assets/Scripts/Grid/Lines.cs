@@ -32,10 +32,5 @@ public class Lines : MonoBehaviour
         _lineRenderer.SetPositions(updatedPoints);
         _lineRenderer.loop = true;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }
