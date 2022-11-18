@@ -1,20 +1,27 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using UnitNS;
 using UnityEngine;
 using Util;
+using Zenject;
 
 namespace BuildingNS
 {
     public class PlaceableBuilding : MonoBehaviour // to interface
     {
+        [Inject] private readonly UnitFactory _unitFactory; 
+        
         public bool canBuild;
         private int _builtPercentage = 0;
         private CfgBuilding _buildingConfig;
-        private bool _isBuilt = false;
+
+        private List<Unit> _workers; // todo change to array
         
         private void Start()
         {
             canBuild = true;
+            _workers = new List<Unit>();
             Debug.Log("Building created");
         }
         
@@ -48,8 +55,7 @@ namespace BuildingNS
                 _builtPercentage += 1;
                 yield return new WaitForSeconds(0.01f);
             }
-
-            _isBuilt = true;
+            
             SpawnWorker();
         }
 
@@ -57,12 +63,15 @@ namespace BuildingNS
         {
             if (_buildingConfig.unit != null)
             {
-                for (int i = 0; i < 3; i++)
-                {
-                    var rGameObject = (GameObject)Resources.Load(_buildingConfig.unit.path);
-                    Instantiate(rGameObject, this.transform);
-                }
-  
+                GameObject unitGb = (GameObject)Resources.Load(_buildingConfig.unit.path);
+                Unit unit = _unitFactory.Create(unitGb, this.transform.parent.transform);
+
+                Vector3 parentPosition = this.transform.position;
+                
+                unit.transform.position.Set(parentPosition.x, parentPosition.y, parentPosition.z );
+                unit.SetParentBuilding(this);
+                _workers.Add(unit);
+                    
             }
         }
         
@@ -81,7 +90,7 @@ namespace BuildingNS
             {
                 if (canBuild) canBuild = false;
                 
-                Debug.Log("An object is still inside of the trigger " + other.name);
+                //Debug.Log("An object is still inside of the trigger " + other.name);
             }
         }
 

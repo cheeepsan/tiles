@@ -1,23 +1,101 @@
 using System;
+using System.Collections;
+using BuildingNS;
+using ResourceNS;
+using Signals.ResourceNS;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using Zenject;
 
 namespace UnitNS
 {
     public class Unit : MonoBehaviour
     {
+        [Inject] private ResourceSignals _resourceSignals;
         
-        NavMeshAgent _myNavMeshAgent;
+        private NavMeshAgent _myNavMeshAgent;
+        private Resource _currentResource;
+        private bool _resourceAtWork;
+        private PlaceableBuilding _parentBuilding;
         public void Start()
         {
             _myNavMeshAgent = GetComponent<NavMeshAgent>();
-            GoTo();
-        }
-
-        public void GoTo()
-        {
-            _myNavMeshAgent.SetDestination(new Vector3(9.5f, 0f, 17.5f));
+            
+            AskForWork();
         }
         
+
+        
+        private IEnumerator Work()
+        {
+
+            //while (_resourceAtWork)
+            //{
+                _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+                NavMeshPath path = new NavMeshPath();
+                NavMesh.CalculatePath(this.transform.position, 
+                    _currentResource.gameObject.transform.position, NavMesh.AllAreas, path);
+            //}
+            
+            ///
+            _resourceSignals.FireAskForAvailableResource(
+                new AskForAvailableResourceSignal()
+                {
+                    sender = this
+                });
+            
+            yield return null;
+        }
+
+
+        public void SetParentBuilding(PlaceableBuilding parent)
+        {
+            _parentBuilding = parent;
+        }
+        
+        public void SetCurrentResource(Resource resource)
+        {
+            _currentResource = resource;
+            _resourceAtWork = true;
+            
+            _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject == _currentResource.gameObject)
+            {
+                Debug.Log("Trigger, resource");
+                _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
+            } else if (other.gameObject == _parentBuilding.gameObject)
+            {
+                Debug.Log("Trigger, BUILDING");
+                _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+            }
+            else
+            {
+                //Debug.Log("Trigger, OTHER");
+                //_myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+            }
+        }
+        
+        /*
+         * TODO CHANGE TO REGISTER
+         *
+         * MOVE REGISTRATION TO BUILDING
+         * BUILDING <-> RESOURCEMANAGER
+         *  |
+         *  |
+         * UNIT
+         */
+        private void AskForWork()
+        {
+            _resourceSignals.FireAskForAvailableResource(
+                new AskForAvailableResourceSignal()
+                {
+                    sender = this
+                });
+        }
     }
 }

@@ -19,6 +19,8 @@ namespace Game
         [Inject] private readonly UiSignals _uiSignals;
         [Inject] private readonly BuildingSignals _buildingSignals;
         
+        [Inject] private readonly PlaceableBuildingFactory _placeableBuildingFactory;
+        
         private List<CfgBuilding> _prefabs;
 
         private Building _selectedObject;
@@ -60,10 +62,10 @@ namespace Game
                 Destroy(_currentPlaceableObject);
             }
 
-            GameObject gb = Instantiate(_selectedObject.GetGameObject());
-
-            _currentPlaceableObject = gb;
-            _currentPlaceableBuilding = gb.GetComponentInChildren<PlaceableBuilding>();
+            PlaceableBuilding instantiatedBuilding = _placeableBuildingFactory.Create(_selectedObject.GetGameObject());
+            
+            _currentPlaceableObject = instantiatedBuilding.gameObject;
+            _currentPlaceableBuilding = instantiatedBuilding;
             _currentPlaceableBuilding.SetBuildingConfig(_selectedObject.GetBuildingConfiguration()); // TODO: Unify Building and PlaceableBuilding?    
             
             var position = _currentPlaceableObject.transform.position;

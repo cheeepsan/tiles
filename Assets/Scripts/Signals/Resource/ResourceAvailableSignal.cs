@@ -1,9 +1,11 @@
+using ResourceNS;
 using UnityEngine;
 
-namespace Signals.Resource
+namespace Signals.ResourceNS
 {
     public class ResourceAvailableSignal : IResourceSignal
     {
-        public GameObject resource;
+        public string resourceId;
+        public Resource resource;
     }
 }

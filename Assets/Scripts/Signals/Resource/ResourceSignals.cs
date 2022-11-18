@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Zenject;
 
-namespace Signals.Resource
+namespace Signals.ResourceNS
 {
     public class ResourceSignals : IInitializable
     {
@@ -21,6 +21,11 @@ namespace Signals.Resource
         public void FireResourceAvailableSignal(ResourceAvailableSignal a)
         {
             _resourceSignalBus.Fire(a);
+        }
+
+        public void FireAskForAvailableResource(AskForAvailableResourceSignal s)
+        {
+            _resourceSignalBus.Fire(s);
         }
 
         public void Subscribe2<IReseourceSignal, T>(Action<IReseourceSignal, T> actionOnFire, T a)

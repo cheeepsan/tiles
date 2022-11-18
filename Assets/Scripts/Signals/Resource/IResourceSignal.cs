@@ -1,4 +1,4 @@
-namespace Signals.Resource
+namespace Signals.ResourceNS
 {
     public interface IResourceSignal
     {
