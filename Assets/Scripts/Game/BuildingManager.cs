@@ -9,11 +9,11 @@ namespace Game
     {
         private readonly BuildingSignals _buildingSignals;
 
-        private Dictionary<string, Building> _placedBuildings;
+        private Dictionary<string, PlaceableBuilding> _placedBuildings;
         
         public BuildingManager(BuildingSignals buildingSignals)
         {
-            _placedBuildings = new Dictionary<string, Building>();
+            _placedBuildings = new Dictionary<string, PlaceableBuilding>();
             _buildingSignals = buildingSignals;
             SubscribeOnBuildingPlacedEvent();
         }
@@ -22,26 +22,19 @@ namespace Game
         {
             var buildingsString = $"Building amount: {_placedBuildings.Count} \n";
             
-            foreach (var keyValue in _placedBuildings)
-            {
-                buildingsString += $"{keyValue.Key} : {keyValue.Value.GetBuildingConfiguration().ToString()} \n";
-            }
-
             return buildingsString;
         }
 
         private void SubscribeOnBuildingPlacedEvent()
         {
-            _buildingSignals.Subscribe2<BuildingPlacedSignal, Dictionary<string, Building>>( (x, b) =>
+            _buildingSignals.Subscribe2<BuildingPlacedSignal, Dictionary<string, PlaceableBuilding>>( (x, b) =>
                 BuildingPlaced(x, b)
                 , _placedBuildings);
         }
         
-        private Action<BuildingPlacedSignal, Dictionary<string, Building>> BuildingPlaced = (s, d) =>
+        private Action<BuildingPlacedSignal, Dictionary<string, PlaceableBuilding>> BuildingPlaced = (s, d) =>
         {
-            string uuid = Guid.NewGuid().ToString();
-            Building building = new Building(s.buildingConfig);
-            d.Add(uuid, building);
+            d.Add(s.placeableBuilding.GetId(), s.placeableBuilding);
         };
     }
 }

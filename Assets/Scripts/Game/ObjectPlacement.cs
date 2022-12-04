@@ -34,10 +34,12 @@ namespace Game
 
         public static int TERRAIN_LAYER_MASK = 1 << 6; // todo, move to zenject
 
+        private GameObject _hierarchyParent;
 
         
         void Start()
         {
+            _hierarchyParent = GameObject.Find("Objects"); // hack, move to own static class
             _prefabs = conf.GetCfgBuildingList();
             var firstBuildingConf = _prefabs.First();
             var fromResources = (GameObject)Resources.Load(firstBuildingConf.path);
@@ -62,7 +64,7 @@ namespace Game
                 Destroy(_currentPlaceableObject);
             }
 
-            PlaceableBuilding instantiatedBuilding = _placeableBuildingFactory.Create(_selectedObject.GetGameObject());
+            PlaceableBuilding instantiatedBuilding = _placeableBuildingFactory.Create(_selectedObject.GetGameObject(), _hierarchyParent.transform);
             
             _currentPlaceableObject = instantiatedBuilding.gameObject;
             _currentPlaceableBuilding = instantiatedBuilding;
@@ -108,12 +110,12 @@ namespace Game
                     BuildingPlacedSignal buildingPlacedSignal = new BuildingPlacedSignal
                     {
                         placedTimestamp = DateTime.Now,
-                        buildingConfig = _selectedObject.GetBuildingConfiguration(),
-                        pos = _currentPlaceableObject.transform.position
+                        placeableBuilding = _currentPlaceableBuilding
                     };
                     
-                    _currentPlaceableBuilding.Place();
-                    _buildingSignals.FireBuildingPlacedEvent(buildingPlacedSignal);
+                    _currentPlaceableBuilding.Place(); 
+                    
+                    _buildingSignals.FireBuildingPlacedEvent(buildingPlacedSignal); // TODO FIRE ONLY IF ACTUALLY PLACED
                     
                     _objectInPlacement = false;
                     _currentPlaceableObject = null;

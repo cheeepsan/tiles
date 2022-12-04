@@ -77,10 +77,4 @@ public class UiRenderer : MonoBehaviour
         Action onBuildingSignal = UpdateInfoWindow;
         _buildingSignalBus.Subscribe<BuildingPlacedSignal>(onBuildingSignal);
     }
-    
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -1,25 +1,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ResourceNS;
+using ResourceNS.Enum;
+using Signals.ResourceNS;
 using UnitNS;
 using UnityEngine;
 using Util;
 using Zenject;
-
 namespace BuildingNS
 {
-    public class PlaceableBuilding : MonoBehaviour // to interface
+    public class PlaceableBuilding : MonoBehaviour
     {
-        [Inject] private readonly UnitFactory _unitFactory; 
-        
+        [Inject] private readonly UnitFactory _unitFactory;
+        [Inject] private readonly ResourceSignals _resourceSignals;
+
+        private string _id;
+            
         public bool canBuild;
         private int _builtPercentage = 0;
         private CfgBuilding _buildingConfig;
+        private bool _isAvailable;
 
+        private Resource _currentResource;
         private List<Unit> _workers; // todo change to array
+
+        public ResourceType preferredResource;
         
+
         private void Start()
         {
+            _id = Guid.NewGuid().ToString();
             canBuild = true;
             _workers = new List<Unit>();
             Debug.Log("Building created");
@@ -48,6 +59,40 @@ namespace BuildingNS
             GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
         }
 
+        public string GetId()
+        {
+            return _id;
+        }
+
+        public void SetAvailable(bool isAvailable)
+        {
+            _isAvailable = isAvailable;
+        }
+        
+        public bool IsAvailable()
+        {
+            return _isAvailable;
+        }
+
+        public void SetCurrentResource(Resource resource)
+        {
+            _currentResource = resource;
+
+            _isAvailable = false;
+
+            foreach (Unit worker in _workers)
+            {
+                worker.SetCurrentResource(_currentResource);
+            }
+
+            SetWorkersToWork();
+        }
+        
+        public Resource GetCurrentResource()
+        {
+            return _currentResource;
+        }
+        
         private IEnumerator BuildingProcess()
         {
             while (_builtPercentage != 100)
@@ -56,6 +101,8 @@ namespace BuildingNS
                 yield return new WaitForSeconds(0.01f);
             }
             
+            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
+            _isAvailable = true;
             SpawnWorker();
         }
 
@@ -68,10 +115,17 @@ namespace BuildingNS
 
                 Vector3 parentPosition = this.transform.position;
                 
-                unit.transform.position.Set(parentPosition.x, parentPosition.y, parentPosition.z );
+                unit.transform.position = parentPosition;
                 unit.SetParentBuilding(this);
                 _workers.Add(unit);
-                    
+            }
+        }
+
+        private void SetWorkersToWork()
+        {
+            foreach (var worker in _workers)
+            {
+                worker.WorkOnResource();
             }
         }
         
@@ -90,7 +144,6 @@ namespace BuildingNS
             {
                 if (canBuild) canBuild = false;
                 
-                //Debug.Log("An object is still inside of the trigger " + other.name);
             }
         }
 

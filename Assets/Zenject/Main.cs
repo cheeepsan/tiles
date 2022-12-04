@@ -1,11 +1,12 @@
+using System;
 using BuildingNS;
 using Zenject;
 using Signals.Building;
 using Signals.ResourceNS;
 using Signals.UI;
 using UnitNS;
-using UnityEngine;
 using Util;
+using Object = UnityEngine.Object;
 
 namespace Game
 {
@@ -19,7 +20,7 @@ namespace Game
             Container.Bind<Configuration>().AsSingle().NonLazy();
             
             Container.Bind<BuildingManager>().AsSingle().NonLazy();
-            Container.Bind<ResourceManager>().AsSingle().NonLazy();
+            Container.Bind<IDisposable>().To<ResourceManager>().AsSingle().NonLazy();
             
             Container.Bind<UiSignals>().AsSingle().NonLazy();
             Container.Bind<BuildingSignals>().AsSingle().NonLazy();
@@ -29,8 +30,9 @@ namespace Game
             Container.DeclareSignal<BuildingPlacedSignal>();
 
             Container.DeclareSignal<ResourceAvailableSignal>();
-            Container.DeclareSignal<AskForAvailableResourceSignal>();
-
+            Container.DeclareSignal<RegisterBuildingSignal>();
+            Container.DeclareSignal<ResourceIsSetToBuildingSignal>();
+            
             Container.BindFactory<Object, PlaceableBuilding, PlaceableBuildingFactory>()
                 .FromFactory<PrefabFactory<PlaceableBuilding>>();
             
