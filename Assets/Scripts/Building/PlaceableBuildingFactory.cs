@@ -13,8 +13,10 @@ namespace BuildingNS
         
         public PlaceableBuilding Create(Object prefab, Transform transform)
         {
-            return _container.InstantiatePrefabForComponent<PlaceableBuilding>(prefab, transform);
-        }
+            PlaceableBuilding building =
+                    _container.InstantiatePrefabForComponent<PlaceableBuilding>(prefab, transform);
 
+            return building;
+        }
     }
 }

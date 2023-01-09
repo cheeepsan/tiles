@@ -35,8 +35,12 @@ namespace Game
             
             Container.BindFactory<Object, PlaceableBuilding, PlaceableBuildingFactory>()
                 .FromFactory<PrefabFactory<PlaceableBuilding>>();
+            Container.BindFactory<Object, BuildingElement, BuildingElementFactory>()
+                .FromFactory<PrefabFactory<BuildingElement>>();
             
             Container.BindFactory<Object, Unit, UnitFactory>().FromFactory<PrefabFactory<Unit>>();
+
+            Container.Bind<TimeManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         }
 
     }

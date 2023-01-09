@@ -38883,7 +38883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AgentTypeID: 0
-  m_CollectObjects: 2
+  m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
@@ -46459,6 +46459,10 @@ PrefabInstance:
     - target: {fileID: 712119899669050713, guid: b42ee55a738ea2544be9177de3902861, type: 3}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5318388407511926095, guid: b42ee55a738ea2544be9177de3902861, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 92.1
       objectReference: {fileID: 0}
     - target: {fileID: 8732252447022646307, guid: b42ee55a738ea2544be9177de3902861, type: 3}
       propertyPath: m_Camera

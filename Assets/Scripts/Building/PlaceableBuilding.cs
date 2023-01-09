@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game;
 using ResourceNS;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
@@ -14,17 +15,18 @@ namespace BuildingNS
     {
         [Inject] private readonly UnitFactory _unitFactory;
         [Inject] private readonly ResourceSignals _resourceSignals;
+        private int _builtPercentage = 0;
+        private CfgBuilding _buildingConfig;
+        private bool _isAvailable;
+        private bool _isBuilding;    
+        
+        private Resource _currentResource;
+        private List<Unit> _workers; // todo change to array
 
         private string _id;
             
         public bool canBuild;
-        private int _builtPercentage = 0;
-        private CfgBuilding _buildingConfig;
-        private bool _isAvailable;
-
-        private Resource _currentResource;
-        private List<Unit> _workers; // todo change to array
-
+ 
         public ResourceType preferredResource;
         
 
@@ -33,13 +35,20 @@ namespace BuildingNS
             _id = Guid.NewGuid().ToString();
             canBuild = true;
             _workers = new List<Unit>();
-            Debug.Log("Building created");
+
         }
         
         public void Place()
         {
-            IEnumerator coroutine = BuildingProcess();
-            StartCoroutine(coroutine);
+            _isBuilding = true;
+            TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
+            {
+                BuildingOnTick();
+            };
+            
+            // coroutine as alternate method
+            //IEnumerator coroutine = BuildingProcess();
+            //StartCoroutine(coroutine);
         }
 
         public void SetBuildingConfig(CfgBuilding buildingCfg)
@@ -93,6 +102,34 @@ namespace BuildingNS
             return _currentResource;
         }
         
+        private void BuildingOnTick()
+        {
+            if (_isBuilding)
+            {
+                int tempBuiltPercentage = _builtPercentage + _buildingConfig.constructPerTick;
+                if (tempBuiltPercentage >= 100)
+                {
+                    _builtPercentage = 100;
+                    _isBuilding = false;
+                    _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
+                    _isAvailable = true;
+            
+                    SpawnWorker();
+                }
+                else
+                {
+                    _builtPercentage = tempBuiltPercentage;
+                }
+            }
+            else
+            {
+                // do everything else
+            }
+        }
+        
+        // Coroutine was used before tick system
+        // Building is timed with update within tick system. Or maybe coroutine is better? 
+        /*
         private IEnumerator BuildingProcess()
         {
             while (_builtPercentage != 100)
@@ -103,8 +140,9 @@ namespace BuildingNS
             
             _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
             _isAvailable = true;
+            
             SpawnWorker();
-        }
+        }*/
 
         private void SpawnWorker()
         {
@@ -134,6 +172,7 @@ namespace BuildingNS
             if (other.gameObject.layer != 6)
             {
                 canBuild = false;
+                
                 Debug.Log("An object entered. " + other.name);
             }
         }

@@ -14,6 +14,7 @@ namespace Util
         public string name;
         public string path;
         public string type;
+        public int constructPerTick;
         [CanBeNull] public CfgUnit unit;
 
         public override string ToString()

@@ -3,13 +3,15 @@
     "id": 1,
     "name": "Worker",
     "path": "Tiles/Buildings/Worker",
-    "type": "worker_house"
+    "type": "worker_house",
+    "constructPerTick": 5
   },
   {
     "id": 2,
     "name": "Farm",
     "path": "Tiles/Buildings/Farm",
     "type": "farm",
+    "constructPerTick": 5,
     "unit": {
       "name": "farmer",
       "path": "Tiles/Creatures/Person"
@@ -19,13 +21,15 @@
     "id": 3,
     "name": "Shop",
     "path": "Tiles/Buildings/Shop",
-    "type": "shop"
+    "type": "shop",
+    "constructPerTick": 6
   },
   {
-    "id": 3,
+    "id": 4,
     "name": "Palace",
-    "path": "Tiles/Buildings/Shop",
-    "type": "shop"
+    "path": "Tiles/Buildings/Palace",
+    "type": "palace",
+    "constructPerTick": 5
   }
 ]
   

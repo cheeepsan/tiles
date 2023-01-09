@@ -42,6 +42,7 @@ namespace Game
             SubscribeToSignals();
         }
 
+        // TODO: Remove coroutine, set subscribe to tick system
         private IEnumerator PingAvailableResources()
         {
             while (true) // nice
