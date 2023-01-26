@@ -12,17 +12,18 @@ namespace UnitNS
 {
     public class Unit : MonoBehaviour
     {
-        [Inject] private ResourceSignals _resourceSignals;
+        [Inject] protected ResourceSignals _resourceSignals;
 
-        private NavMeshAgent _myNavMeshAgent;
-        private Resource _currentResource;
-        private bool _resourceAtWork;
-        private PlaceableBuilding _parentBuilding;
+        protected NavMeshAgent _myNavMeshAgent;
+        protected Resource _currentResource;
+        protected PlaceableBuilding _parentBuilding;
+        
+        protected bool _atWork;
 
         public void Start()
         {
             _myNavMeshAgent = GetComponent<NavMeshAgent>();
-            _resourceAtWork = false;
+            _atWork = false;
         }
 
         public void SetParentBuilding(PlaceableBuilding parent)
@@ -33,38 +34,38 @@ namespace UnitNS
         public void SetCurrentResource(Resource resource)
         {
             _currentResource = resource;
-            _resourceAtWork = false;
+            _atWork = false;
         }
 
-        public void WorkOnResource()
+        public virtual void Work()
         {
-            if (_currentResource != null && !_resourceAtWork)
-            {
-                _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
-                _resourceAtWork = true;
-            }
+            //if (_currentResource != null && !_atWork)
+            //{
+            //    _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+            //    _atWork = true;
+            //}
         }
 
-        private void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
-            if (_currentResource != null)
-            {
-                if (other.gameObject == _currentResource.gameObject)
-                {
-                    Debug.Log("Trigger, resource");
-                    _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
-                }
-                else if (other.gameObject == _parentBuilding.gameObject)
-                {
-                    Debug.Log("Trigger, BUILDING");
-                    _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
-                }
-                else
-                {
-                    //Debug.Log("Trigger, OTHER");
-                    //_myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
-                }
-            }
+            //if (_currentResource != null)
+            //{
+            //    if (other.gameObject == _currentResource.gameObject)
+            //    {
+            //        Debug.Log("Trigger, resource");
+            //        _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
+            //    }
+            //    else if (other.gameObject == _parentBuilding.gameObject)
+            //    {
+            //        Debug.Log("Trigger, BUILDING");
+            //        _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+            //    }
+            //    else
+            //    {
+            //        //Debug.Log("Trigger, OTHER");
+            //        //_myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+            //    }
+            //}
         }
     }
 }

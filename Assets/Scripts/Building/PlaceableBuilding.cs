@@ -163,7 +163,7 @@ namespace BuildingNS
         {
             foreach (var worker in _workers)
             {
-                worker.WorkOnResource();
+                worker.Work();
             }
         }
         

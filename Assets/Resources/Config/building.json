@@ -14,7 +14,7 @@
     "constructPerTick": 5,
     "unit": {
       "name": "farmer",
-      "path": "Tiles/Creatures/Person"
+      "path": "Tiles/Creatures/Farmer"
     }
   },
   {
@@ -29,7 +29,11 @@
     "name": "Palace",
     "path": "Tiles/Buildings/Palace",
     "type": "palace",
-    "constructPerTick": 5
+    "constructPerTick": 5,
+    "unit": {
+      "name": "scribe",
+      "path": "Tiles/Creatures/Scribe"
+    }
   }
 ]
   
