@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 // https://youtu.be/NFvmfoRnarY
-// Events are easier then Zenject messages?
+// Events are easier than Zenject messages?
 namespace Game
 {
     public class TimeManager : MonoBehaviour
@@ -13,7 +13,13 @@ namespace Game
             public int tick;
         }
 
+        public class On10TickEventArgs : EventArgs
+        {
+            public int tick;
+        }
+
         public static event EventHandler<OnTickEventArgs> OnTick;
+        public static event EventHandler<On10TickEventArgs> On10Tick;
         
         private int _tick;
         private float _tickTimer;
@@ -32,6 +38,14 @@ namespace Game
                 _tickTimer -= _tickMax;
                 _tick++;
                 if (OnTick != null) OnTick(this, new OnTickEventArgs() { tick = _tick });
+                if (_tick % 10 == 0)
+                {
+                    if (On10Tick != null)
+                    {
+                        On10Tick(this, new On10TickEventArgs() { tick = _tick });
+                    }
+                }
+
             }
 
         }

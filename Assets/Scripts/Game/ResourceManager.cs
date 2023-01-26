@@ -27,63 +27,59 @@ namespace Game
 
         private GameObject _coroutineRunnerGameObject;
         private CoroutineRunner _coroutineRunner;
-        
+
         public ResourceManager(ResourceSignals resourceSignals)
         {
             _resourceSignals = resourceSignals;
             _resources = new Dictionary<string, Resource>();
             _buildings = new Dictionary<string, PlaceableBuilding>();
 
-            _coroutineRunnerGameObject = new GameObject();
-            _coroutineRunner = _coroutineRunnerGameObject.AddComponent<CoroutineRunner>();
-            _coroutineRunner.SetCoroutine(PingAvailableResources());
-            _coroutineRunner.RunCoroutine();
 
+            TimeManager.On10Tick += delegate(object sender, TimeManager.On10TickEventArgs args)
+            {
+                PingAvailableResources();
+            };
+            
             SubscribeToSignals();
         }
-
-        // TODO: Remove coroutine, set subscribe to tick system
-        private IEnumerator PingAvailableResources()
-        {
-            while (true) // nice
-            {
-                Debug.Log("Polling data for resource manager");
-                List<Resource> availableResources = new List<Resource>();
-                List<PlaceableBuilding> availableBuildings = new List<PlaceableBuilding>();
-
-                foreach (var b in _buildings.Values)
-                {
-                    if (b.IsAvailable())
-                    {
-                        availableBuildings.Add(b);
-                    }
-                }
-
-                foreach (var r in _resources.Values)
-                {
-                    if (r.IsAvailable())
-                    {
-                        availableResources.Add(r);
-                    }
-                }
-
-                if (availableResources.Count > 0 && availableBuildings.Count > 0)
-                {
-                    // todo, sort building by priorities
-                    // todo, get available resources by preferred type
-                    // todo, resolve buildings and resources in batch 
-
-                    PlaceableBuilding building = availableBuildings.First();
-                    Resource resource = availableResources.First();
-                    building.SetCurrentResource(resource);
-                }
-
-                availableResources.Clear();
-                availableBuildings.Clear();
-                yield return new WaitForSeconds(5f);
-            }
-        }
         
+        private void PingAvailableResources()
+        {
+            Debug.Log("Polling data for resource manager");
+            List<Resource> availableResources = new List<Resource>();
+            List<PlaceableBuilding> availableBuildings = new List<PlaceableBuilding>();
+
+            foreach (var b in _buildings.Values)
+            {
+                if (b.IsAvailable())
+                {
+                    availableBuildings.Add(b);
+                }
+            }
+
+            foreach (var r in _resources.Values)
+            {
+                if (r.IsAvailable())
+                {
+                    availableResources.Add(r);
+                }
+            }
+
+            if (availableResources.Count > 0 && availableBuildings.Count > 0)
+            {
+                // todo, sort building by priorities
+                // todo, get available resources by preferred type
+                // todo, resolve buildings and resources in batch 
+
+                PlaceableBuilding building = availableBuildings.First();
+                Resource resource = availableResources.First();
+                building.SetCurrentResource(resource);
+            }
+
+            availableResources.Clear();
+            availableBuildings.Clear();
+        }
+
 
         private void SubscribeToSignals()
         {
@@ -114,7 +110,7 @@ namespace Game
             //_timer.Dispose();
             Debug.Log("CLOSING RESOURCE MANAGER");
         }
-        
+
         /*
          TIMER WORKS ON ANOTHER THREAD, AS A QUICK HACK COROUTINE MONOBEHAVIOUR WAS USED
          
