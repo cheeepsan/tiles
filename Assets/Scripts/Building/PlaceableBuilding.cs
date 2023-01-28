@@ -64,8 +64,10 @@ namespace BuildingNS
 
             float yOffset = 60; // not fixed? 
             float xOffset = 30;
-
-            GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
+            if (_isBuilding)
+            {
+                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
+            }
         }
 
         public string GetId()
@@ -126,23 +128,6 @@ namespace BuildingNS
                 // do everything else
             }
         }
-        
-        // Coroutine was used before tick system
-        // Building is timed with update within tick system. Or maybe coroutine is better? 
-        /*
-        private IEnumerator BuildingProcess()
-        {
-            while (_builtPercentage != 100)
-            {
-                _builtPercentage += 1;
-                yield return new WaitForSeconds(0.01f);
-            }
-            
-            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
-            _isAvailable = true;
-            
-            SpawnWorker();
-        }*/
 
         private void SpawnWorker()
         {

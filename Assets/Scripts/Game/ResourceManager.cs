@@ -45,7 +45,7 @@ namespace Game
         
         private void PingAvailableResources()
         {
-            Debug.Log("Polling data for resource manager");
+            //Debug.Log("Polling data for resource manager");
             List<Resource> availableResources = new List<Resource>();
             List<PlaceableBuilding> availableBuildings = new List<PlaceableBuilding>();
 

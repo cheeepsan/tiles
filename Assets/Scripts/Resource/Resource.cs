@@ -15,6 +15,7 @@ namespace ResourceNS
         private bool _isAvailable;
         
         protected ResourceType resourceType;
+        protected float yield;
         
         public virtual void Start()
         {
@@ -27,6 +28,29 @@ namespace ResourceNS
             });
         }
 
+        public virtual float GetYield()
+        {
+            if (yield != null)
+            {
+                return yield;
+            }
+            else
+            {
+                return 0f;   
+            }
+        }
+        
+        public virtual ResourceType GetResourceType()
+        {
+            if (resourceType != null)
+            {
+                return resourceType;
+            }
+            else
+            {
+                return ResourceType.Unknown;
+            }
+        }
         public void SetAvailable(bool isAvailable)
         {
             _isAvailable = isAvailable;

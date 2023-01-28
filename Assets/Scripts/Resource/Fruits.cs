@@ -9,6 +9,7 @@ namespace ResourceNS
         {
             base.Start();
             resourceType = ResourceType.Fruits;
+            yield = 5f;
         }
     }
 }
