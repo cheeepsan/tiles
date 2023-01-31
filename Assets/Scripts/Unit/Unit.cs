@@ -17,16 +17,17 @@ namespace UnitNS
         protected NavMeshAgent _myNavMeshAgent;
         protected Resource _currentResource;
         protected PlaceableBuilding _parentBuilding;
-        
+        protected Camera _camera;
         protected bool _atWork;
 
         public void Start()
         {
+            _camera = Camera.main;
             _myNavMeshAgent = GetComponent<NavMeshAgent>();
             _atWork = false;
         }
 
-        public void SetParentBuilding(PlaceableBuilding parent)
+        public virtual void SetParentBuilding(PlaceableBuilding parent)
         {
             _parentBuilding = parent;
         }

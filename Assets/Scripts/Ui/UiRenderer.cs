@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game;
+using ResourceNS.Enum;
 using Signals.Building;
+using Signals.ResourceNS;
 using Signals.UI;
 using TMPro;
 using UnityEngine;
@@ -20,6 +22,7 @@ public class UiRenderer : MonoBehaviour
     [Inject] private BuildingManager _buildingManager;
 
     private TMP_Text _infoWindow;
+    private TMP_Text _resourcesWindow;
     
     void Start()
     {
@@ -64,6 +67,10 @@ public class UiRenderer : MonoBehaviour
             var info = GameObject.FindGameObjectWithTag("info");
             _infoWindow = info.GetComponent<TMP_Text>();
             _infoWindow.SetText("Window ready");
+            
+            var resource = GameObject.FindGameObjectWithTag("resources");
+            _resourcesWindow = resource.GetComponent<TMP_Text>();
+            _resourcesWindow.SetText("Window ready");
         }
     }
 
@@ -72,7 +79,31 @@ public class UiRenderer : MonoBehaviour
         string buildingManagerStatus = _buildingManager.GetStateInfo();
         _infoWindow.SetText(buildingManagerStatus);
     }
+
+    private void UpdateResourcesWindow(Dictionary<ResourceType, float> resources)
+    {
+        string data = "";
+        foreach (var resource in resources)
+        { 
+            data += $"{resource.Key}  : {resource.Value} + \n";
+        }
+        _resourcesWindow.SetText(data);
+        
+    }
+    
     private void SubscribeToSignals()
+    {
+        SubscribeToBuildingSignals();
+        SubscribeToResourceSignals();
+    }
+
+    private void SubscribeToResourceSignals()
+    {
+        _uiSignalBus.Subscribe<UpdateResourcesViewSignal>
+            ((x) => { UpdateResourcesWindow(x.resources); });
+    }
+    
+    private void SubscribeToBuildingSignals()
     {
         Action onBuildingSignal = UpdateInfoWindow;
         _buildingSignalBus.Subscribe<BuildingPlacedSignal>(onBuildingSignal);

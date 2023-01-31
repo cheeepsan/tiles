@@ -33,6 +33,12 @@ namespace Signals.ResourceNS
             _resourceSignalBus.Fire(s);
         }
         
+        public void FireAddResourceToQueue(AddResourceToQueueSignal s)
+        {
+            _resourceSignalBus.Fire(s);
+        }
+
+        
         public void Subscribe<IResourceSignal>(Action<IResourceSignal> actionOnFire)
         {
             _resourceSignalBus.Subscribe(actionOnFire);

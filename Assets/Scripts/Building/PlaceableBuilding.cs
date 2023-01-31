@@ -14,11 +14,13 @@ namespace BuildingNS
     public class PlaceableBuilding : MonoBehaviour
     {
         [Inject] private readonly UnitFactory _unitFactory;
-        [Inject] private readonly ResourceSignals _resourceSignals;
+        [Inject] protected readonly ResourceSignals _resourceSignals;
+
         private int _builtPercentage = 0;
         private CfgBuilding _buildingConfig;
         private bool _isAvailable;
-        private bool _isBuilding;    
+        private bool _isBuilding;
+        private Camera _camera;
         
         private Resource _currentResource;
         private List<Unit> _workers; // todo change to array
@@ -35,6 +37,7 @@ namespace BuildingNS
             _id = Guid.NewGuid().ToString();
             canBuild = true;
             _workers = new List<Unit>();
+            _camera = Camera.main;
 
         }
         
@@ -45,10 +48,6 @@ namespace BuildingNS
             {
                 BuildingOnTick();
             };
-            
-            // coroutine as alternate method
-            //IEnumerator coroutine = BuildingProcess();
-            //StartCoroutine(coroutine);
         }
 
         public void SetBuildingConfig(CfgBuilding buildingCfg)
@@ -60,7 +59,7 @@ namespace BuildingNS
         {
 
             Vector2 targetPos;
-            targetPos = Camera.main.WorldToScreenPoint(transform.position);
+            targetPos = _camera.WorldToScreenPoint(transform.position);
 
             float yOffset = 60; // not fixed? 
             float xOffset = 30;
@@ -102,6 +101,11 @@ namespace BuildingNS
         public Resource GetCurrentResource()
         {
             return _currentResource;
+        }
+
+        public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple)
+        {
+            
         }
         
         private void BuildingOnTick()

@@ -14,8 +14,8 @@ namespace ResourceNS
         private string _resourceUuid;
         private bool _isAvailable;
         
-        protected ResourceType resourceType;
-        protected float yield;
+        protected ResourceType? resourceType; // TODO: MOVE TO CONF
+        protected float? yield; 
         
         public virtual void Start()
         {
@@ -32,7 +32,7 @@ namespace ResourceNS
         {
             if (yield != null)
             {
-                return yield;
+                return yield.Value;
             }
             else
             {
@@ -44,7 +44,7 @@ namespace ResourceNS
         {
             if (resourceType != null)
             {
-                return resourceType;
+                return resourceType.Value;
             }
             else
             {

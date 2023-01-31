@@ -32,6 +32,8 @@ namespace Game
             Container.DeclareSignal<ResourceAvailableSignal>();
             Container.DeclareSignal<RegisterBuildingSignal>();
             Container.DeclareSignal<ResourceIsSetToBuildingSignal>();
+            Container.DeclareSignal<AddResourceToQueueSignal>();
+            Container.DeclareSignal<UpdateResourcesViewSignal>();
             
             Container.BindFactory<Object, PlaceableBuilding, PlaceableBuildingFactory>()
                 .FromFactory<PrefabFactory<PlaceableBuilding>>();

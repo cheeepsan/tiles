@@ -24,6 +24,11 @@ namespace Signals.UI
         {
             _uiSignalBus.Fire(b);
         }
+        
+        public void FireUpdateResourcesViewSignal(UpdateResourcesViewSignal b)
+        {
+            _uiSignalBus.Fire(b);
+        }
 
         public void Subscribe<T>(Action<T> actionOnFire)
         {

@@ -12,7 +12,7 @@ namespace UnitNS
             Debug.Log(_buildingManager.GetStateInfo());
         }
         
-        protected virtual void OnTriggerEnter(Collider other)
+        protected override void OnTriggerEnter(Collider other)
         {
 
         }

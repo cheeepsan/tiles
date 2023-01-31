@@ -1,4 +1,5 @@
 using System;
+using BuildingNS;
 using Game;
 using ResourceNS.Enum;
 using UnityEngine;
@@ -90,10 +91,9 @@ namespace UnitNS
                 }
                 else
                 {
+                    _parentBuilding.DisposeResources(_gatheredResourceAmount);
                     _currentTick = 0f;
                     _isDisposingResources = false;
-
-                    Debug.Log("Disposing: " + _gatheredResourceAmount);
                     _gatheredResourceAmount = Tuple.Create(ResourceType.Unknown, 0f);
                     _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
                 }
@@ -104,7 +104,7 @@ namespace UnitNS
         {
 
             Vector2 targetPos;
-            targetPos = Camera.main.WorldToScreenPoint(transform.position);
+            targetPos = _camera.WorldToScreenPoint(transform.position);
 
             float yOffset = 60; // not fixed? 
             float xOffset = 30;

@@ -6,9 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using BuildingNS;
 using ResourceNS;
+using ResourceNS.Enum;
 using Signals.ResourceNS;
+using Signals.UI;
 using UnityEngine;
 using Util;
+using Zenject;
 
 
 namespace Game
@@ -18,31 +21,62 @@ namespace Game
     /// </summary>
     public class ResourceManager : IDisposable
     {
+        [Inject] private readonly UiSignals _uiSignals;
+
         private readonly ResourceSignals _resourceSignals;
 
         private Dictionary<string, Resource> _resources;
         private Dictionary<string, PlaceableBuilding> _buildings;
 
-        //private System.Threading.Timer _timer;
-
-        private GameObject _coroutineRunnerGameObject;
-        private CoroutineRunner _coroutineRunner;
+        private Dictionary<ResourceType, float> _accumulatedResources;
+        private Queue<Tuple<ResourceType, float>> _storingQueue;
 
         public ResourceManager(ResourceSignals resourceSignals)
         {
             _resourceSignals = resourceSignals;
             _resources = new Dictionary<string, Resource>();
             _buildings = new Dictionary<string, PlaceableBuilding>();
-
+            _accumulatedResources = new Dictionary<ResourceType, float>();
+            _storingQueue = new Queue<Tuple<ResourceType, float>>(); // TODO: Is it even needed. Is it even smart
 
             TimeManager.On10Tick += delegate(object sender, TimeManager.On10TickEventArgs args)
             {
                 PingAvailableResources();
+                DequeueResourceQueue();
             };
-            
+
             SubscribeToSignals();
         }
-        
+
+        public void AddResourceToQueue(Tuple<ResourceType, float> r)
+        {
+            _storingQueue.Enqueue(r);
+        }
+
+        // TODO: Resource add/removal should be synced. Maybe removal prio 1, addition may be skipped?
+        private void DequeueResourceQueue()
+        {
+            bool dataInQueue = _storingQueue.Count > 0;
+            if (dataInQueue)
+            {
+                while (_storingQueue.Count > 0)
+                {
+                    Tuple<ResourceType, float> element = _storingQueue.Dequeue();
+                    if (_accumulatedResources.TryGetValue(element.Item1, out float resourceValue))
+                    {
+                        _accumulatedResources[element.Item1] = resourceValue + element.Item2;
+                    }
+                    else
+                    {
+                        _accumulatedResources.Add(element.Item1, element.Item2);
+                    }
+                }
+
+                _uiSignals.FireUpdateResourcesViewSignal(new UpdateResourcesViewSignal()
+                    { resources = _accumulatedResources });
+            }
+        }
+
         private void PingAvailableResources()
         {
             //Debug.Log("Polling data for resource manager");
@@ -85,12 +119,19 @@ namespace Game
         {
             SubscribeToResourceAvailableSignal();
             SubscribeToBuildingRegistered();
+            SubscribeToAddResourceToQueue();
         }
 
         private void SubscribeToBuildingRegistered()
         {
             _resourceSignals.Subscribe<RegisterBuildingSignal>
                 ((x) => { _buildings.Add(x.sender.GetId(), x.sender); });
+        }
+
+        private void SubscribeToAddResourceToQueue()
+        {
+            _resourceSignals.Subscribe<AddResourceToQueueSignal>
+                ((x) => { AddResourceToQueue(x.resource); });
         }
 
         private void SubscribeToResourceAvailableSignal()

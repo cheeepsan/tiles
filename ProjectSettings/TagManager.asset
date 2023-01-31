@@ -6,6 +6,7 @@ TagManager:
   tags:
   - button
   - info
+  - resources
   layers:
   - Default
   - TransparentFX
