@@ -5,6 +5,7 @@ using Signals.Building;
 using Signals.ResourceNS;
 using Signals.UI;
 using UnitNS;
+using UnityEngine.UI;
 using Util;
 using Object = UnityEngine.Object;
 
@@ -41,6 +42,8 @@ namespace Game
                 .FromFactory<PrefabFactory<BuildingElement>>();
             
             Container.BindFactory<Object, Unit, UnitFactory>().FromFactory<PrefabFactory<Unit>>();
+            
+            Container.BindFactory<Object, Button, UiBuildingButtonFactory>().FromFactory<PrefabFactory<Button>>();
 
             Container.Bind<TimeManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         }

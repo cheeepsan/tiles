@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using BuildingNS;
 using Game;
 using ResourceNS.Enum;
 using Signals.Building;
@@ -20,10 +21,16 @@ public class UiRenderer : MonoBehaviour
     [Inject] private UiSignals _uiSignalBus;
     [Inject] private BuildingSignals _buildingSignalBus;
     [Inject] private BuildingManager _buildingManager;
+    [Inject] private readonly UiBuildingButtonFactory _buildingButtonFactory;
 
+    [SerializeField] public GameObject parentPanel;
+    [SerializeField] public GameObject buildingButtonPanel;
+    [SerializeField] public GameObject buildingInfoPanel;
+    [SerializeField] public GameObject resourcesInfoPanel;
+    
     private TMP_Text _infoWindow;
     private TMP_Text _resourcesWindow;
-    
+
     void Start()
     {
         if (_configuration != null)
@@ -36,42 +43,27 @@ public class UiRenderer : MonoBehaviour
 
     public void Instantiate()
     {
-   
-        var buttons = GameObject.FindGameObjectsWithTag("button");
+        CfgUi buttonConfiguration = _configuration.GetUIConfiguration()[CfgUiElementsEnum.BuildingButton];
+        GameObject buttonPrefab = (GameObject)Resources.Load(buttonConfiguration.path);
         using var enumerator = _configuration.GetCfgBuildingList().GetEnumerator();
-
-        if (enumerator.MoveNext())
+        foreach (CfgBuilding currentBuilding in _configuration.GetCfgBuildingList())
         {
-            foreach (var button in buttons)
+            Button button = _buildingButtonFactory.Create(buttonPrefab, buildingButtonPanel.transform);
+            TMP_Text text = button.GetComponentInChildren<TMP_Text>();
+            text.SetText(currentBuilding.name);
+            button.onClick.AddListener(() =>
             {
-                var currentBuilding = enumerator.Current;
-                if (currentBuilding != null)
-                {
-                    Button b = button.GetComponent<Button>();
-                    TMP_Text text = button.GetComponentInChildren<TMP_Text>();
-
-                    text.SetText(currentBuilding.name);
-                    
-                    b.onClick.AddListener(() =>
-                    {
-                        _uiSignalBus.FireBuildingButtonEvent(new BuildingButtonClickedSignal { buildingConf = currentBuilding });
-                    });
-                }
-
-                if (enumerator.MoveNext() == false)
-                {
-                    break;
-                }
-            }
-            
-            var info = GameObject.FindGameObjectWithTag("info");
-            _infoWindow = info.GetComponent<TMP_Text>();
-            _infoWindow.SetText("Window ready");
-            
-            var resource = GameObject.FindGameObjectWithTag("resources");
-            _resourcesWindow = resource.GetComponent<TMP_Text>();
-            _resourcesWindow.SetText("Window ready");
+                _uiSignalBus.FireBuildingButtonEvent(new BuildingButtonClickedSignal
+                    { buildingConf = currentBuilding });
+            });
         }
+
+
+        _infoWindow = buildingInfoPanel.GetComponentInChildren<TMP_Text>();
+        _infoWindow.SetText("Window ready: buildings");
+        
+        _resourcesWindow = resourcesInfoPanel.GetComponentInChildren<TMP_Text>();
+        _resourcesWindow.SetText("Window ready: resources");
     }
 
     private void UpdateInfoWindow()
@@ -84,13 +76,13 @@ public class UiRenderer : MonoBehaviour
     {
         string data = "";
         foreach (var resource in resources)
-        { 
+        {
             data += $"{resource.Key}  : {resource.Value} + \n";
         }
+
         _resourcesWindow.SetText(data);
-        
     }
-    
+
     private void SubscribeToSignals()
     {
         SubscribeToBuildingSignals();
@@ -102,7 +94,7 @@ public class UiRenderer : MonoBehaviour
         _uiSignalBus.Subscribe<UpdateResourcesViewSignal>
             ((x) => { UpdateResourcesWindow(x.resources); });
     }
-    
+
     private void SubscribeToBuildingSignals()
     {
         Action onBuildingSignal = UpdateInfoWindow;
