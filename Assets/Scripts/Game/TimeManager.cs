@@ -47,7 +47,17 @@ namespace Game
                 }
 
             }
+            
+        }
 
+        public int GetCurrentTick()
+        {
+            return _tick;
+        }
+
+        public void SetCurrentTick(int tick)
+        {
+            _tick = tick;
         }
     }
 }

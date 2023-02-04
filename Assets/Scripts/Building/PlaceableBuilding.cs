@@ -54,21 +54,12 @@ namespace BuildingNS
         {
             _buildingConfig = buildingCfg;
         }
-        
-        public void OnGUI()
+
+        public CfgBuilding GetBuildingConfig()
         {
-
-            Vector2 targetPos;
-            targetPos = _camera.WorldToScreenPoint(transform.position);
-
-            float yOffset = 60; // not fixed? 
-            float xOffset = 30;
-            if (_isBuilding)
-            {
-                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
-            }
+            return _buildingConfig;
         }
-
+        
         public string GetId()
         {
             return _id;
@@ -106,6 +97,20 @@ namespace BuildingNS
         public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple)
         {
             
+        }
+                
+        public void OnGUI()
+        {
+
+            Vector2 targetPos;
+            targetPos = _camera.WorldToScreenPoint(transform.position);
+
+            float yOffset = 60; // not fixed? 
+            float xOffset = 30;
+            if (_isBuilding)
+            {
+                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
+            }
         }
         
         private void BuildingOnTick()

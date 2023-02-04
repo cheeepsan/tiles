@@ -1,5 +1,6 @@
 using System;
 using BuildingNS;
+using SaveStateNS;
 using Zenject;
 using Signals.Building;
 using Signals.ResourceNS;
@@ -19,10 +20,12 @@ namespace Game
             SignalBusInstaller.Install(Container);
             
             Container.Bind<Configuration>().AsSingle().NonLazy();
-            
+
             Container.Bind<BuildingManager>().AsSingle().NonLazy();
-            Container.Bind<IDisposable>().To<ResourceManager>().AsSingle().NonLazy();
+            Container.Bind<ResourceManager>().AsSingle().NonLazy();
             
+            Container.Bind<SaveState>().AsSingle().NonLazy();
+
             Container.Bind<UiSignals>().AsSingle().NonLazy();
             Container.Bind<BuildingSignals>().AsSingle().NonLazy();
             Container.Bind<ResourceSignals>().AsSingle().NonLazy();

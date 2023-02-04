@@ -19,7 +19,7 @@ namespace Game
     /// <summary>
     ///  Keep track of available resource spots: fruits, available farms etc...
     /// </summary>
-    public class ResourceManager : IDisposable
+    public class ResourceManager 
     {
         [Inject] private readonly UiSignals _uiSignals;
 
@@ -48,7 +48,7 @@ namespace Game
             SubscribeToSignals();
         }
 
-        public void AddResourceToQueue(Tuple<ResourceType, float> r)
+        private void AddResourceToQueue(Tuple<ResourceType, float> r)
         {
             _storingQueue.Enqueue(r);
         }
@@ -146,70 +146,9 @@ namespace Game
                 , _resources);
         }
 
-        public void Dispose()
+        public Dictionary<ResourceType, float> GetAllResources()
         {
-            //_timer.Dispose();
-            Debug.Log("CLOSING RESOURCE MANAGER");
+            return _accumulatedResources;
         }
-
-        /*
-         TIMER WORKS ON ANOTHER THREAD, AS A QUICK HACK COROUTINE MONOBEHAVIOUR WAS USED
-         
-        private void RunPollingTask()
-        {
-            var startTimeSpan = TimeSpan.Zero;
-            var periodTimeSpan = TimeSpan.FromSeconds(5);
-
-            _timer = new System.Threading.Timer((e) =>
-            {
-                PingAvailableResources();   
-            }, null, startTimeSpan, periodTimeSpan);
-            
-        }
-         
-         /// <summary>
-         ///  Polling from another thread raises problems within UnityObjects: UnityEngine.UnityException:
-         /// get_gameObject can only be called from the main thread.
-         ///
-         /// Objects have to be stored without unity Monobehaviour data ?
-         /// </summary>
-         private void PingAvailableResources()
-         {
-             Debug.Log("Polling data for resource manager");
-             List<Resource> availableResources = new List<Resource>();
-             List<PlaceableBuilding> availableBuildings = new List<PlaceableBuilding>();
-
-             foreach (var b in _buildings.Values)
-             {
-                 if (b.IsAvailable())
-                 {
-                     availableBuildings.Add(b);
-                 }
-             }
-
-             foreach (var r in _resources.Values)
-             {
-                 if (r.IsAvailable())
-                 {
-                     availableResources.Add(r);
-                 }
-             }
-
-             if (availableResources.Count > 0 && availableBuildings.Count > 0)
-             {
-                 // todo, sort building by priorities
-                 // todo, get available resources by preferred type
-                 // todo, resolve buildings and resources in batch 
-
-                 PlaceableBuilding building = availableBuildings.First();
-                 Resource resource = availableResources.First();
-                 building.SetCurrentResource(resource);
-             }
-
-             availableResources.Clear();
-             availableBuildings.Clear();
-             //yield return new WaitForSeconds(5f);
-         }
-         */
     }
 }

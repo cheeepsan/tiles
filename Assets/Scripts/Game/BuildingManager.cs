@@ -24,7 +24,12 @@ namespace Game
             
             return buildingsString;
         }
-
+        
+        public Dictionary<string, PlaceableBuilding> GetAllBuildings()
+        {
+            return _placedBuildings;
+        }
+        
         private void SubscribeOnBuildingPlacedEvent()
         {
             _buildingSignals.Subscribe2<BuildingPlacedSignal, Dictionary<string, PlaceableBuilding>>( (x, b) =>

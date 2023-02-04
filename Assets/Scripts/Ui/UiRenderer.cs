@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BuildingNS;
 using Game;
 using ResourceNS.Enum;
+using SaveStateNS;
 using Signals.Building;
 using Signals.ResourceNS;
 using Signals.UI;
@@ -22,11 +23,13 @@ public class UiRenderer : MonoBehaviour
     [Inject] private BuildingSignals _buildingSignalBus;
     [Inject] private BuildingManager _buildingManager;
     [Inject] private readonly UiBuildingButtonFactory _buildingButtonFactory;
+    [Inject] private readonly SaveState _saveState;
 
     [SerializeField] public GameObject parentPanel;
     [SerializeField] public GameObject buildingButtonPanel;
     [SerializeField] public GameObject buildingInfoPanel;
     [SerializeField] public GameObject resourcesInfoPanel;
+    [SerializeField] public GameObject menuButtonPanel;
     
     private TMP_Text _infoWindow;
     private TMP_Text _resourcesWindow;
@@ -58,7 +61,25 @@ public class UiRenderer : MonoBehaviour
             });
         }
 
+        CfgUi menuButtonConfiguration = _configuration.GetUIConfiguration()[CfgUiElementsEnum.MenuButton];
+        GameObject menuButtonPrefab = (GameObject)Resources.Load(menuButtonConfiguration.path);
 
+        Button saveButton = _buildingButtonFactory.Create(menuButtonPrefab, menuButtonPanel.transform);
+        TMP_Text saveText = saveButton.GetComponentInChildren<TMP_Text>();
+        saveText.SetText("Save");
+        saveButton.onClick.AddListener(() =>
+        {
+            _saveState.SaveStateToJson();
+        });
+        
+        Button loadButton = _buildingButtonFactory.Create(menuButtonPrefab, menuButtonPanel.transform);
+        TMP_Text loadText = loadButton.GetComponentInChildren<TMP_Text>();
+        loadText.SetText("Load");
+        loadButton.onClick.AddListener(() =>
+        {
+            _saveState.LoadStateFromJson();
+        });
+        
         _infoWindow = buildingInfoPanel.GetComponentInChildren<TMP_Text>();
         _infoWindow.SetText("Window ready: buildings");
         

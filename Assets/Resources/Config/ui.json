@@ -1,5 +1,8 @@
 {
   "0" : {
     "path": "Ui/BuildingButton"
+  }  ,
+  "1" : {
+    "path": "Ui/BuildingButton"
   }
 }
