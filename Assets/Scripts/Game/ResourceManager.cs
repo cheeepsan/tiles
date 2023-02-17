@@ -19,7 +19,7 @@ namespace Game
     /// <summary>
     ///  Keep track of available resource spots: fruits, available farms etc...
     /// </summary>
-    public class ResourceManager 
+    public class ResourceManager
     {
         [Inject] private readonly UiSignals _uiSignals;
 
@@ -62,9 +62,12 @@ namespace Game
                 while (_storingQueue.Count > 0)
                 {
                     Tuple<ResourceType, float> element = _storingQueue.Dequeue();
-                    if (_accumulatedResources.TryGetValue(element.Item1, out float resourceValue))
+                    if (_accumulatedResources.ContainsKey(element.Item1))
                     {
-                        _accumulatedResources[element.Item1] = resourceValue + element.Item2;
+                        if (_accumulatedResources.TryGetValue(element.Item1, out float resourceValue))
+                        {
+                            _accumulatedResources[element.Item1] = resourceValue + element.Item2;
+                        }
                     }
                     else
                     {

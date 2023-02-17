@@ -5,6 +5,8 @@ using System.Linq;
 using BuildingNS;
 using Game;
 using Newtonsoft.Json;
+using ResourceNS.Enum;
+using Signals.Building;
 using UnityEngine;
 using Util;
 using Zenject;
@@ -16,10 +18,14 @@ namespace SaveStateNS
         [Inject] private readonly BuildingManager _buildingManager;
         [Inject] private readonly ResourceManager _resourceManager;
         [Inject] private readonly TimeManager _timeManager;
-
+        [Inject] private readonly PlaceableBuildingFactory _placeableBuildingFactory;
+        [Inject] private readonly BuildingSignals _buildingSignals;
+        
+        private GameObject _buildingHierarchyParent;
+        
         public SaveState()
         {
-            
+            _buildingHierarchyParent = GameObject.Find("Objects"); // hack, move to own static class
         }
 
         public void SaveStateToJson()
@@ -37,15 +43,56 @@ namespace SaveStateNS
                 buildingsToSave.Add(buildingSaveState);
             }
 
-            SaveStateMasterObject saveStateMasterObject = new SaveStateMasterObject(buildingsToSave, _timeManager.GetCurrentTick());
+            Dictionary<ResourceType, float> resources = _resourceManager.GetAllResources();
+            
+            SaveStateMasterObject saveStateMasterObject = new SaveStateMasterObject(buildingsToSave, resources, _timeManager.GetCurrentTick());
 
             String a = JsonConvert.SerializeObject(saveStateMasterObject);
             File.WriteAllText("save.json", a);
         }
-
+        /// <summary>
+        /// Restores buildings and resources from json state
+        /// </summary>
         public void LoadStateFromJson()
         {
             Debug.Log("LOAD STATE");
+            var text = File.ReadAllText("save.json");
+
+            SaveStateMasterObject saveState = JsonConvert.DeserializeObject<SaveStateMasterObject>(text);
+
+            /*
+             *  RESTORE BUILDINGS:
+             *  1. INSTANTIATE
+             *  2. PLACE
+             *  3. BUILDING SHOULD HAVE OLD ID
+             *  4. BUILDING SHOULD BE SENT TO BUILDING MANAGER
+             */
+            Dictionary<string, PlaceableBuilding> buildingDict = _buildingManager.GetAllBuildings();
+    
+            foreach (var keyValue in buildingDict)
+            {
+                // Should unsubscribe from everything. DISPOSABLE?
+                GameObject.Destroy(keyValue.Value);
+            }
+            
+            buildingDict.Clear();
+
+            foreach (BuildingSaveState building in saveState.buildings)
+            {
+                GameObject fromResources = (GameObject)Resources.Load(building.config.path);
+                Building toPlace = new Building(fromResources, building.config);
+                PlaceableBuilding instantiatedBuilding = _placeableBuildingFactory.Create(toPlace.GetGameObject(), _buildingHierarchyParent.transform);
+                instantiatedBuilding.transform.position = new Vector3(building.x, building.y, building.z);
+                //BuildingPlacedSignal buildingPlacedSignal = new BuildingPlacedSignal
+                //{
+                //    placedTimestamp = DateTime.Now,
+                //    placeableBuilding = instantiatedBuilding
+                //};
+
+                //instantiatedBuilding.RestoredFromSaveState();
+
+                // _buildingSignals.FireBuildingPlacedEvent(buildingPlacedSignal);
+            }
         }
     }
 }

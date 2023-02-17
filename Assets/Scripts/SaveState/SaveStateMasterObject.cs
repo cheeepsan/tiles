@@ -1,17 +1,22 @@
+using System;
 using System.Collections.Generic;
+using ResourceNS.Enum;
 
 namespace SaveStateNS
-{   
-    [System.Serializable]
+{
+    [Serializable]
     public class SaveStateMasterObject
     {
-        private List<BuildingSaveState> _buildings;
-        private int _timeTick;
+        
+        public List<BuildingSaveState> buildings;
+        public Dictionary<ResourceType, float> resources;
+        public int timeTick;
 
-        public SaveStateMasterObject(List<BuildingSaveState> buildings, int timeTick)
+        public SaveStateMasterObject(List<BuildingSaveState> buildings, Dictionary<ResourceType, float> resources, int timeTick)
         {
-            _buildings = buildings;
-            _timeTick = timeTick;
+            this.buildings = buildings;
+            this.timeTick = timeTick;
+            this.resources = resources;
         }
         
     }

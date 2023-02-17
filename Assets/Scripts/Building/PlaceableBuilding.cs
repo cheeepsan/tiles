@@ -40,6 +40,15 @@ namespace BuildingNS
             _camera = Camera.main;
 
         }
+
+        public void RestoredFromSaveState()
+        {
+            InitiateOnBuilt();
+            TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
+            {
+                BuildingOnTick();
+            };
+        }
         
         public void Place()
         {
@@ -120,12 +129,7 @@ namespace BuildingNS
                 int tempBuiltPercentage = _builtPercentage + _buildingConfig.constructPerTick;
                 if (tempBuiltPercentage >= 100)
                 {
-                    _builtPercentage = 100;
-                    _isBuilding = false;
-                    _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
-                    _isAvailable = true;
-            
-                    SpawnWorker();
+                    InitiateOnBuilt();
                 }
                 else
                 {
@@ -138,6 +142,16 @@ namespace BuildingNS
             }
         }
 
+        private void InitiateOnBuilt()
+        {
+            _builtPercentage = 100;
+            _isBuilding = false;
+            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
+            _isAvailable = true;
+            
+            SpawnWorker();
+        }
+        
         private void SpawnWorker()
         {
             if (_buildingConfig.unit != null)
