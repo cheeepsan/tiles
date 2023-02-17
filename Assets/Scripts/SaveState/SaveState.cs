@@ -66,6 +66,7 @@ namespace SaveStateNS
             
             RestoreBuildings(saveState);
             RestoreResources(saveState);
+            _timeManager.SetCurrentTick(saveState.timeTick);
         }
 
 
