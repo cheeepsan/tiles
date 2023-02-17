@@ -20,9 +20,9 @@ namespace SaveStateNS
         [Inject] private readonly TimeManager _timeManager;
         [Inject] private readonly PlaceableBuildingFactory _placeableBuildingFactory;
         [Inject] private readonly BuildingSignals _buildingSignals;
-        
+
         private GameObject _buildingHierarchyParent;
-        
+
         public SaveState()
         {
             _buildingHierarchyParent = GameObject.Find("Objects"); // hack, move to own static class
@@ -31,11 +31,11 @@ namespace SaveStateNS
         public void SaveStateToJson()
         {
             Debug.Log("SAVE STATE");
-            List<PlaceableBuilding> buildingList = 
+            List<PlaceableBuilding> buildingList =
                 _buildingManager.GetAllBuildings().Select(x => x.Value).ToList();
 
             List<BuildingSaveState> buildingsToSave = new List<BuildingSaveState>();
-            
+
             foreach (var building in buildingList)
             {
                 BuildingSaveState buildingSaveState =
@@ -44,14 +44,18 @@ namespace SaveStateNS
             }
 
             Dictionary<ResourceType, float> resources = _resourceManager.GetAllResources();
-            
-            SaveStateMasterObject saveStateMasterObject = new SaveStateMasterObject(buildingsToSave, resources, _timeManager.GetCurrentTick());
+
+            SaveStateMasterObject saveStateMasterObject =
+                new SaveStateMasterObject(buildingsToSave, resources, _timeManager.GetCurrentTick());
 
             String a = JsonConvert.SerializeObject(saveStateMasterObject);
             File.WriteAllText("save.json", a);
         }
+
         /// <summary>
-        /// Restores buildings and resources from json state
+        /// Restores buildings and resources from json state.
+        /// Reload of the existing state doesn't currently work. Needs a clean state now.
+        /// TODO: fix reload
         /// </summary>
         public void LoadStateFromJson()
         {
@@ -59,39 +63,48 @@ namespace SaveStateNS
             var text = File.ReadAllText("save.json");
 
             SaveStateMasterObject saveState = JsonConvert.DeserializeObject<SaveStateMasterObject>(text);
+            
+            RestoreBuildings(saveState);
+            RestoreResources(saveState);
+        }
 
-            /*
-             *  RESTORE BUILDINGS:
-             *  1. INSTANTIATE
-             *  2. PLACE
-             *  3. BUILDING SHOULD HAVE OLD ID
-             *  4. BUILDING SHOULD BE SENT TO BUILDING MANAGER
-             */
+
+        private void RestoreResources(SaveStateMasterObject saveState)
+        {
+            Dictionary<ResourceType, float> resource = saveState.resources;
+            _resourceManager.SetAllResources(resource);
+        }
+
+        private void RestoreBuildings(SaveStateMasterObject saveState)
+        {
             Dictionary<string, PlaceableBuilding> buildingDict = _buildingManager.GetAllBuildings();
-    
+
             foreach (var keyValue in buildingDict)
             {
                 // Should unsubscribe from everything. DISPOSABLE?
                 GameObject.Destroy(keyValue.Value);
             }
-            
+
             buildingDict.Clear();
 
             foreach (BuildingSaveState building in saveState.buildings)
             {
                 GameObject fromResources = (GameObject)Resources.Load(building.config.path);
                 Building toPlace = new Building(fromResources, building.config);
-                PlaceableBuilding instantiatedBuilding = _placeableBuildingFactory.Create(toPlace.GetGameObject(), _buildingHierarchyParent.transform);
+                PlaceableBuilding instantiatedBuilding =
+                    _placeableBuildingFactory.Create(toPlace.GetGameObject(), _buildingHierarchyParent.transform);
+
                 instantiatedBuilding.transform.position = new Vector3(building.x, building.y, building.z);
-                //BuildingPlacedSignal buildingPlacedSignal = new BuildingPlacedSignal
-                //{
-                //    placedTimestamp = DateTime.Now,
-                //    placeableBuilding = instantiatedBuilding
-                //};
+                instantiatedBuilding.SetBuildingConfig(building.config);
+                instantiatedBuilding.SetId(building.id);
+                instantiatedBuilding.SetIsLoaded(true);
 
-                //instantiatedBuilding.RestoredFromSaveState();
-
-                // _buildingSignals.FireBuildingPlacedEvent(buildingPlacedSignal);
+                BuildingPlacedSignal buildingPlacedSignal = new BuildingPlacedSignal
+                {
+                    placedTimestamp = DateTime.Now,
+                    placeableBuilding = instantiatedBuilding
+                };
+                _buildingSignals.FireBuildingPlacedEvent(buildingPlacedSignal);
             }
         }
     }

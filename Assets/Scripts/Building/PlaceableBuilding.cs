@@ -20,6 +20,7 @@ namespace BuildingNS
         private CfgBuilding _buildingConfig;
         private bool _isAvailable;
         private bool _isBuilding;
+        private bool _isLoaded = false;
         private Camera _camera;
         
         private Resource _currentResource;
@@ -32,16 +33,21 @@ namespace BuildingNS
         public ResourceType preferredResource;
         
 
-        private void Start()
+        void Start()
         {
             _id = Guid.NewGuid().ToString();
             canBuild = true;
             _workers = new List<Unit>();
             _camera = Camera.main;
-
+            if (_isLoaded)
+            {
+                RestoredFromSaveState();
+            }
         }
-
-        public void RestoredFromSaveState()
+        /*
+         * INIT 
+         */
+        private void RestoredFromSaveState()
         {
             InitiateOnBuilt();
             TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
@@ -58,7 +64,75 @@ namespace BuildingNS
                 BuildingOnTick();
             };
         }
+        
+        private void InitiateOnBuilt()
+        {
+            _builtPercentage = 100;
+            _isBuilding = false;
+            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
+            _isAvailable = true;
+            
+            SpawnWorker();
+        }
+        
+        /*
+         * FUNCTIONALITY
+         */
+        
+        
+        
+        private void BuildingOnTick()
+        {
+            if (_isBuilding)
+            {
+                int tempBuiltPercentage = _builtPercentage + _buildingConfig.constructPerTick;
+                if (tempBuiltPercentage >= 100)
+                {
+                    InitiateOnBuilt();
+                }
+                else
+                {
+                    _builtPercentage = tempBuiltPercentage;
+                }
+            }
+            else
+            {
+                // do everything else
+            }
+        }
 
+        private void SpawnWorker()
+        {
+            if (_buildingConfig.unit != null)
+            {
+                GameObject unitGb = (GameObject)Resources.Load(_buildingConfig.unit.path);
+                Unit unit = _unitFactory.Create(unitGb, this.transform.parent.transform);
+
+                Vector3 parentPosition = this.transform.position;
+                
+                unit.transform.position = parentPosition;
+                unit.SetParentBuilding(this);
+                _workers.Add(unit);
+            }
+        }
+
+        private void SetWorkersToWork()
+        {
+            foreach (var worker in _workers)
+            {
+                worker.Work();
+            }
+        }
+
+        public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple)
+        {
+            
+        }
+
+        /*
+         * GET SET
+         */
+        
         public void SetBuildingConfig(CfgBuilding buildingCfg)
         {
             _buildingConfig = buildingCfg;
@@ -67,6 +141,11 @@ namespace BuildingNS
         public CfgBuilding GetBuildingConfig()
         {
             return _buildingConfig;
+        }
+
+        public void SetId(string id)
+        {
+            _id = id;
         }
         
         public string GetId()
@@ -97,17 +176,21 @@ namespace BuildingNS
 
             SetWorkersToWork();
         }
-        
+
         public Resource GetCurrentResource()
         {
             return _currentResource;
         }
-
-        public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple)
+        
+        public void SetIsLoaded(bool isLoaded)
         {
-            
+            _isLoaded = isLoaded;
         }
-                
+        
+        /*
+         * OTHER
+         */
+        
         public void OnGUI()
         {
 
@@ -121,59 +204,11 @@ namespace BuildingNS
                 GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
             }
         }
+
         
-        private void BuildingOnTick()
-        {
-            if (_isBuilding)
-            {
-                int tempBuiltPercentage = _builtPercentage + _buildingConfig.constructPerTick;
-                if (tempBuiltPercentage >= 100)
-                {
-                    InitiateOnBuilt();
-                }
-                else
-                {
-                    _builtPercentage = tempBuiltPercentage;
-                }
-            }
-            else
-            {
-                // do everything else
-            }
-        }
-
-        private void InitiateOnBuilt()
-        {
-            _builtPercentage = 100;
-            _isBuilding = false;
-            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
-            _isAvailable = true;
-            
-            SpawnWorker();
-        }
-        
-        private void SpawnWorker()
-        {
-            if (_buildingConfig.unit != null)
-            {
-                GameObject unitGb = (GameObject)Resources.Load(_buildingConfig.unit.path);
-                Unit unit = _unitFactory.Create(unitGb, this.transform.parent.transform);
-
-                Vector3 parentPosition = this.transform.position;
-                
-                unit.transform.position = parentPosition;
-                unit.SetParentBuilding(this);
-                _workers.Add(unit);
-            }
-        }
-
-        private void SetWorkersToWork()
-        {
-            foreach (var worker in _workers)
-            {
-                worker.Work();
-            }
-        }
+        /*
+         * TRIGGERS
+         */
         
         private void OnTriggerEnter(Collider other)
         {

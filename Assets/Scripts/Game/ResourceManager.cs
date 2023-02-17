@@ -153,5 +153,12 @@ namespace Game
         {
             return _accumulatedResources;
         }
+
+        public void SetAllResources(Dictionary<ResourceType, float> resource)
+        {
+            _accumulatedResources = resource;
+            _uiSignals.FireUpdateResourcesViewSignal(new UpdateResourcesViewSignal()
+                { resources = _accumulatedResources });
+        }
     }
 }
