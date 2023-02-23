@@ -17,9 +17,15 @@ namespace Game
         {
             public int tick;
         }
+        
+        public class On40TickEventArgs : EventArgs
+        {
+            public int tick;
+        }
 
         public static event EventHandler<OnTickEventArgs> OnTick;
         public static event EventHandler<On10TickEventArgs> On10Tick;
+        public static event EventHandler<On40TickEventArgs> On40Tick;
         
         private int _tick;
         private float _tickTimer;
@@ -44,10 +50,18 @@ namespace Game
                     {
                         On10Tick(this, new On10TickEventArgs() { tick = _tick });
                     }
-                }
 
+                }
+                // JUST TESTING
+                if (_tick % 40 == 0)
+                {
+                    if (On40Tick != null)
+                    {
+                        On40Tick(this, new On40TickEventArgs() { tick = _tick });
+                    }
+                }
             }
-            
+
         }
 
         public int GetCurrentTick()

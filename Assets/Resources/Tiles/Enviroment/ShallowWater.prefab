@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 654311935051704678}
-  m_Layer: 6
-  m_Name: Ground
+  m_Layer: 0
+  m_Name: ShallowWater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,8 +46,9 @@ GameObject:
   - component: {fileID: 378968729616584037}
   - component: {fileID: 8654525560290051719}
   - component: {fileID: 7531953608324757210}
-  - component: {fileID: 2022754139402931567}
-  m_Layer: 6
+  - component: {fileID: 2595973092407039947}
+  - component: {fileID: 3906514292680229254}
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +98,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dfc6ca85b5caa7c4f9c4a8d63c9e0b4e, type: 2}
+  - {fileID: 2100000, guid: 21e0bd88ae07abf458539bb74c327d20, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -127,10 +128,10 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7616527192667700668}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 6, y: 1, z: 6}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!120 &8654525560290051719
 LineRenderer:
@@ -245,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da0056d63317e8c4085bfe3575a97746, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2022754139402931567
+--- !u!114 &2595973092407039947
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -254,6 +255,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 7616527192667700668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b15bed4594ed415991bf0758ab2f761c, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c60dfcb0c2b46f4991d85cbe180af69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &3906514292680229254
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7616527192667700668}
+  serializedVersion: 2
+  m_Mass: 0.0000001
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

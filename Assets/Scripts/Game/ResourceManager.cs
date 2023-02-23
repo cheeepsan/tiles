@@ -22,32 +22,62 @@ namespace Game
     public class ResourceManager
     {
         [Inject] private readonly UiSignals _uiSignals;
+        [Inject] private Configuration _configuration;
+        [Inject] private FarmPlotFactory _farmPlotFactory;
 
         private readonly ResourceSignals _resourceSignals;
 
-        private Dictionary<string, Resource> _resources;
-        private Dictionary<string, PlaceableBuilding> _buildings;
+        private Dictionary<String, Resource> _resources;
+        private Dictionary<String, PlaceableBuilding> _buildings;
 
         private Dictionary<ResourceType, float> _accumulatedResources;
         private Queue<Tuple<ResourceType, float>> _storingQueue;
 
+        private Dictionary<String, GameObject> _farmPlots;
+
         public ResourceManager(ResourceSignals resourceSignals)
         {
             _resourceSignals = resourceSignals;
-            _resources = new Dictionary<string, Resource>();
-            _buildings = new Dictionary<string, PlaceableBuilding>();
+            _resources = new Dictionary<String, Resource>();
+            _buildings = new Dictionary<String, PlaceableBuilding>();
             _accumulatedResources = new Dictionary<ResourceType, float>();
             _storingQueue = new Queue<Tuple<ResourceType, float>>(); // TODO: Is it even needed. Is it even smart
+            _farmPlots = new Dictionary<String, GameObject>();
 
             TimeManager.On10Tick += delegate(object sender, TimeManager.On10TickEventArgs args)
             {
                 PingAvailableResources();
                 DequeueResourceQueue();
             };
+            
+            TimeManager.On40Tick += delegate(object sender, TimeManager.On40TickEventArgs args)
+            {
+                PaintFarms();
+            };
 
             SubscribeToSignals();
         }
 
+        private void PaintFarms()
+        {
+            // TODO clean up
+            CfgBuilding farm = _configuration.GetCfgWorldObjectsList().Find(x => x.id == 1);
+            GameObject fromResources = (GameObject)Resources.Load(farm.path);
+
+            int totalFarms = _buildings.Values.Count(x => x.preferredResource == ResourceType.Farm);
+            
+            
+            
+            foreach (var key in _farmPlots.Take(totalFarms))
+            {
+                var t = key.Value.gameObject.transform;
+
+                var farmPlot = _farmPlotFactory.Create(fromResources, t);
+                farmPlot.transform.position = new Vector3(t.position.x, t.position.y + 0.5f, t.position.z);
+
+            }
+        }
+        
         private void AddResourceToQueue(Tuple<ResourceType, float> r)
         {
             _storingQueue.Enqueue(r);
@@ -117,12 +147,20 @@ namespace Game
             availableBuildings.Clear();
         }
 
+        private void AddFarmPlot(GameObject gb, String farmPlotGuid)
+        {
+            if (!_farmPlots.ContainsKey(farmPlotGuid))
+            {
+                _farmPlots.Add(farmPlotGuid, gb);
+            }
+        }
 
         private void SubscribeToSignals()
         {
             SubscribeToResourceAvailableSignal();
             SubscribeToBuildingRegistered();
             SubscribeToAddResourceToQueue();
+            SubscribeToAddAvailableFarmPlot();
         }
 
         private void SubscribeToBuildingRegistered()
@@ -137,14 +175,20 @@ namespace Game
                 ((x) => { AddResourceToQueue(x.resource); });
         }
 
+        private void SubscribeToAddAvailableFarmPlot()
+        {
+            _resourceSignals.Subscribe<AddAvailableFarmPlotSignal>
+                ((x) => { AddFarmPlot(x.farmPlot, x.farmPlotGuid); });
+        }
+
         private void SubscribeToResourceAvailableSignal()
         {
-            Action<ResourceAvailableSignal, Dictionary<string, Resource>> ResourceAvailable = (s, d) =>
+            Action<ResourceAvailableSignal, Dictionary<String, Resource>> ResourceAvailable = (s, d) =>
             {
                 d.Add(s.resourceId, s.resource);
             };
 
-            _resourceSignals.Subscribe2<ResourceAvailableSignal, Dictionary<string, Resource>>((x, b) =>
+            _resourceSignals.Subscribe2<ResourceAvailableSignal, Dictionary<String, Resource>>((x, b) =>
                     ResourceAvailable(x, b)
                 , _resources);
         }

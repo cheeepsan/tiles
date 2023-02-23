@@ -1,5 +1,6 @@
 using System;
 using BuildingNS;
+using ResourceNS;
 using SaveStateNS;
 using Zenject;
 using Signals.Building;
@@ -37,12 +38,15 @@ namespace Game
             Container.DeclareSignal<RegisterBuildingSignal>();
             Container.DeclareSignal<ResourceIsSetToBuildingSignal>();
             Container.DeclareSignal<AddResourceToQueueSignal>();
+            Container.DeclareSignal<AddAvailableFarmPlotSignal>();
             Container.DeclareSignal<UpdateResourcesViewSignal>();
             
             Container.BindFactory<Object, PlaceableBuilding, PlaceableBuildingFactory>()
                 .FromFactory<PrefabFactory<PlaceableBuilding>>();
             Container.BindFactory<Object, BuildingElement, BuildingElementFactory>()
                 .FromFactory<PrefabFactory<BuildingElement>>();
+            Container.BindFactory<Object, FarmPlot, FarmPlotFactory>()
+                .FromFactory<PrefabFactory<FarmPlot>>();
             
             Container.BindFactory<Object, Unit, UnitFactory>().FromFactory<PrefabFactory<Unit>>();
             
