@@ -31,7 +31,6 @@ namespace Signals.ResourceNS
     
     public class AddAvailableFarmPlotSignal : IResourceSignal
     {
-        public GameObject farmPlot;
-        public string farmPlotGuid;
+        public Transform farmPlotTransform;
     }
 }

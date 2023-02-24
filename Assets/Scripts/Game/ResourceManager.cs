@@ -1,10 +1,10 @@
 using System;
-using System.Collections;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+
 using BuildingNS;
+using GridNS;
 using ResourceNS;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
@@ -24,6 +24,7 @@ namespace Game
         [Inject] private readonly UiSignals _uiSignals;
         [Inject] private Configuration _configuration;
         [Inject] private FarmPlotFactory _farmPlotFactory;
+        [Inject] private GroundTileset _groundTileset;
 
         private readonly ResourceSignals _resourceSignals;
 
@@ -33,7 +34,7 @@ namespace Game
         private Dictionary<ResourceType, float> _accumulatedResources;
         private Queue<Tuple<ResourceType, float>> _storingQueue;
 
-        private Dictionary<String, GameObject> _farmPlots;
+        private Dictionary<String, Transform> _farmPlots;
 
         public ResourceManager(ResourceSignals resourceSignals)
         {
@@ -42,7 +43,7 @@ namespace Game
             _buildings = new Dictionary<String, PlaceableBuilding>();
             _accumulatedResources = new Dictionary<ResourceType, float>();
             _storingQueue = new Queue<Tuple<ResourceType, float>>(); // TODO: Is it even needed. Is it even smart
-            _farmPlots = new Dictionary<String, GameObject>();
+            _farmPlots = new Dictionary<String, Transform>();
 
             TimeManager.On10Tick += delegate(object sender, TimeManager.On10TickEventArgs args)
             {
@@ -66,18 +67,16 @@ namespace Game
 
             int totalFarms = _buildings.Values.Count(x => x.preferredResource == ResourceType.Farm);
             
-            
-            
             foreach (var key in _farmPlots.Take(totalFarms))
             {
-                var t = key.Value.gameObject.transform;
+                var t = key.Value.transform;
 
                 var farmPlot = _farmPlotFactory.Create(fromResources, t);
                 farmPlot.transform.position = new Vector3(t.position.x, t.position.y + 0.5f, t.position.z);
 
             }
         }
-        
+        // TODO move to stockpile manager
         private void AddResourceToQueue(Tuple<ResourceType, float> r)
         {
             _storingQueue.Enqueue(r);
@@ -146,12 +145,14 @@ namespace Game
             availableResources.Clear();
             availableBuildings.Clear();
         }
-
-        private void AddFarmPlot(GameObject gb, String farmPlotGuid)
+        
+        private void AddFarmPlot(Transform farmPlotCoord)
         {
+            String farmPlotGuid = _groundTileset.GetGroundTileByPosition(farmPlotCoord.position);
+            
             if (!_farmPlots.ContainsKey(farmPlotGuid))
             {
-                _farmPlots.Add(farmPlotGuid, gb);
+                _farmPlots.Add(farmPlotGuid, farmPlotCoord);
             }
         }
 
@@ -178,7 +179,7 @@ namespace Game
         private void SubscribeToAddAvailableFarmPlot()
         {
             _resourceSignals.Subscribe<AddAvailableFarmPlotSignal>
-                ((x) => { AddFarmPlot(x.farmPlot, x.farmPlotGuid); });
+                ((x) => { AddFarmPlot(x.farmPlotTransform); });
         }
 
         private void SubscribeToResourceAvailableSignal()

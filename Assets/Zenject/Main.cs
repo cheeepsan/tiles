@@ -1,5 +1,6 @@
 using System;
 using BuildingNS;
+using GridNS;
 using ResourceNS;
 using SaveStateNS;
 using Zenject;
@@ -30,6 +31,8 @@ namespace Game
             Container.Bind<UiSignals>().AsSingle().NonLazy();
             Container.Bind<BuildingSignals>().AsSingle().NonLazy();
             Container.Bind<ResourceSignals>().AsSingle().NonLazy();
+  
+            Container.Bind<GroundTileset>().AsSingle().NonLazy();
             
             Container.DeclareSignal<BuildingButtonClickedSignal>();
             Container.DeclareSignal<BuildingPlacedSignal>();
