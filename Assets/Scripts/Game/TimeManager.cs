@@ -1,8 +1,15 @@
 using System;
+using Constant;
 using UnityEngine;
+using Util;
+using Zenject;
 
 // https://youtu.be/NFvmfoRnarY
 // Events are easier than Zenject messages?
+
+/*
+ * TODO: CHANGE TICK FROM INT TO FLOAT OR LONG
+ */
 namespace Game
 {
     public class TimeManager : MonoBehaviour
@@ -10,7 +17,9 @@ namespace Game
 
         public class OnTickEventArgs : EventArgs
         {
-            public int tick;
+            public int month;
+            public int currentTick;
+            public String monthName;
         }
 
         public class On10TickEventArgs : EventArgs
@@ -21,19 +30,35 @@ namespace Game
         public class On40TickEventArgs : EventArgs
         {
             public int tick;
+        }        
+        
+        public class OnMonthChangeEventArgs : EventArgs
+        {
+            public int month;
+            public int currentTick;
+            public String monthName;
         }
 
         public static event EventHandler<OnTickEventArgs> OnTick;
         public static event EventHandler<On10TickEventArgs> On10Tick;
         public static event EventHandler<On40TickEventArgs> On40Tick;
+        public static event EventHandler<OnMonthChangeEventArgs> OnMonthChange;
+
+        [Inject] private Configuration _configuration;
         
         private int _tick;
         private float _tickTimer;
         private const float _tickMax = 0.2f;
+        private int _currentMonth;
+        private int _ticksPerMonth;
+        
         private void Start()
         {
+            Settings settings = _configuration.GetSettings();
             Debug.Log("TimeTick is started");
             _tick = 0;
+            _ticksPerMonth = settings.tickPerMonth;
+            _currentMonth = 0;
         }
 
         private void Update()
@@ -43,7 +68,14 @@ namespace Game
             {
                 _tickTimer -= _tickMax;
                 _tick++;
-                if (OnTick != null) OnTick(this, new OnTickEventArgs() { tick = _tick });
+                
+                if (OnTick != null) OnTick(this, new OnTickEventArgs()
+                {
+                    currentTick = _tick,
+                    month = _currentMonth,
+                    monthName = MonthConstant.GetMonthName(_currentMonth)
+                });
+                
                 if (_tick % 10 == 0)
                 {
                     if (On10Tick != null)
@@ -52,7 +84,7 @@ namespace Game
                     }
 
                 }
-                // JUST TESTING
+                // TODO JUST TESTING
                 if (_tick % 40 == 0)
                 {
                     if (On40Tick != null)
@@ -62,6 +94,36 @@ namespace Game
                 }
             }
 
+            ChangeMonth();
+
+        }
+
+        private void ChangeMonth()
+        {
+            if (_tick % _ticksPerMonth == 0)
+            {
+                int monthToBe = _currentMonth + 1;
+                if (monthToBe <= 11)
+                {
+                    _currentMonth = monthToBe;
+                }
+                else
+                {
+                    _currentMonth = 0;
+                }
+
+                String monthNameConstant = MonthConstant.GetMonthName(_currentMonth);
+                if (OnMonthChange != null)
+                {
+                    OnMonthChange(this, new OnMonthChangeEventArgs()
+                    {
+                        month = _currentMonth,
+                        monthName = monthNameConstant,
+                        currentTick = _tick
+                    });
+                }
+
+            }
         }
 
         public int GetCurrentTick()

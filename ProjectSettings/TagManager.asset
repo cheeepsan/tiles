@@ -7,6 +7,7 @@ TagManager:
   - button
   - info
   - resources
+  - time
   layers:
   - Default
   - TransparentFX

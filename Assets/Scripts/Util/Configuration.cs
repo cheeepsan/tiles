@@ -10,6 +10,7 @@ namespace Util
         private List<CfgBuilding> _buildings;
         private List<CfgBuilding> _worldObjects;
         private Dictionary<CfgUiElementsEnum, CfgUi> _ui;
+        private Settings _settings;
 
         public Configuration()
         {
@@ -21,8 +22,16 @@ namespace Util
             
             TextAsset uiConf = Resources.Load<TextAsset>("Config/ui");
             _ui = JsonConvert.DeserializeObject<Dictionary<CfgUiElementsEnum, CfgUi>>(uiConf.text);
+            
+            TextAsset settingsConf = Resources.Load<TextAsset>("Config/settings");
+            _settings = JsonConvert.DeserializeObject<Settings>(settingsConf.text);
         }
 
+        public Settings GetSettings()
+        {
+            return _settings;
+        }
+        
         public List<CfgBuilding> GetCfgBuildingList()
         {
             return _buildings;
