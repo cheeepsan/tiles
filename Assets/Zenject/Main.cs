@@ -35,6 +35,7 @@ namespace Game
             Container.Bind<ResourceSignals>().AsSingle().NonLazy();
   
             Container.Bind<GroundTileset>().AsSingle().NonLazy();
+            Container.Bind<WaterTileset>().AsSingle().NonLazy();
             
             Container.DeclareSignal<BuildingButtonClickedSignal>();
             Container.DeclareSignal<BuildingPlacedSignal>();

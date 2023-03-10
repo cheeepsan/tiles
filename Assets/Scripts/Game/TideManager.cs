@@ -15,6 +15,7 @@ namespace Game
     public class TideManager
     {
         [Inject] private GroundTileset _groundTileset;
+        [Inject] private WaterTileset _waterTileset;
         [Inject] private TideMeshFactory _tideMeshFactory;
         [Inject] private Configuration _configuration;
         
@@ -37,6 +38,7 @@ namespace Game
             {
                 GenerateTide();
             }
+
             
             SubscribeToSignals();
         }
@@ -49,7 +51,7 @@ namespace Game
         private void YearlyCycle(TimeManager.OnMonthChangeEventArgs args)
         {
             List<int> floodMonth = new List<int>() { 0, 1, 2 };
-
+            CreateWater();
             int month = args.month;
             if (floodMonth.Contains(month))
             {
@@ -57,7 +59,7 @@ namespace Game
                 if (month == 1)
                 {
                     if (!_floodActive)
-                    {
+                    {            
                         GenerateTide();
                         _floodActive = true;
                     }
@@ -113,6 +115,44 @@ namespace Game
             }
         }
 
+        private void CreateWater()
+        {
+            var list = _waterTileset.GetAllWaterPos().Select(x =>
+            {
+                GameObject gb = new GameObject();
+                gb.transform.position = x;
+                return gb.transform;
+            }).ToList();
+
+            ConcaveAlgo a = new ConcaveAlgo(list);
+            List<MeshData> meshes = a.CalculateMeshes();
+            foreach (var meshData in meshes)
+            {
+                Mesh m = new Mesh
+                {
+                    name = "test mesh " + meshData.name
+                };
+
+                GameObject gb = (GameObject)Resources.Load(_configuration.GetSettings().tideMeshPath);
+                TideMesh mesh = _tideMeshFactory.Create(gb);
+                
+                mesh.name = meshData.name;
+            
+            
+                m.vertices = meshData.triangleVertices;
+                m.triangles = meshData.triagnles;
+                m.normals = meshData.normals;
+                m.tangents = meshData.tangents;
+                m.uv = meshData.uuvs;
+                var center = meshData.centroid;
+                mesh.transform.position = new Vector3((float)center.X, 0.66f, (float)center.Y);
+                m.RecalculateNormals();
+                mesh.GetComponent<MeshFilter>().sharedMesh = m;
+                m.RecalculateBounds();
+                
+                _createdMeshes.Add(mesh);
+            }
+        }
 
         private void SubscribeToSignals()
         {
