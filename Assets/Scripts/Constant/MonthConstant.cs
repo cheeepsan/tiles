@@ -9,9 +9,15 @@ namespace Constant
     
     /**
      *  TODO: Think about language support
+     * 
      */
     public static class MonthConstant
     {
+        /*
+         * 0 - 3 flood
+         * 4 - 7 field works
+         * 8 - 11 gather
+         */
         public static Dictionary<int, String> months = new Dictionary<int, string>()
         {
             { 0, "I Akhet Thoth" },

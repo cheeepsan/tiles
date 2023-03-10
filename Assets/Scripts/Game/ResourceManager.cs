@@ -51,17 +51,90 @@ namespace Game
                 DequeueResourceQueue();
             };
             
-            TimeManager.On40Tick += delegate(object sender, TimeManager.On40TickEventArgs args)
+            TimeManager.OnMonthChange += delegate(object sender, TimeManager.OnMonthChangeEventArgs args)
             {
-                PaintFarms();
+
+                YearlyCycle(args);
             };
 
             SubscribeToSignals();
         }
 
-        private void PaintFarms()
+        private void YearlyCycle(TimeManager.OnMonthChangeEventArgs args)
         {
-            // TODO clean up
+            /*
+             * 0 - 3 flood
+             * 4 - 7 field works
+             * 8 - 11 gather
+             */
+
+            var list = new List<Transform>();
+            foreach (var pair in _farmPlots)
+            {
+                // transform of transform
+                list.Add(pair.Value.parent.transform);
+
+            }
+
+            ConcaveAlgo a = new ConcaveAlgo(list);
+            List<MeshData> meshes = a.CalculateMeshes();
+            foreach (var meshData in meshes)
+            {
+                Mesh m = new Mesh
+                {
+                    name = "test mesh " + meshData.name
+                };
+
+                GameObject gb = (GameObject)Resources.Load("Meshes/TideMesh");
+
+                var inst = GameObject.Instantiate(gb);
+                inst.name = meshData.name;
+            
+            
+                m.vertices = meshData.triangleVertices;
+                m.triangles = meshData.triagnles;
+                m.normals = meshData.normals;
+                m.tangents = meshData.tangents;
+                m.uv = meshData.uuvs;
+                var center = meshData.centroid;
+                inst.transform.position = new Vector3((float)center.X, 0.66f, (float)center.Y);
+                m.RecalculateNormals();
+                inst.GetComponent<MeshFilter>().sharedMesh = m;
+                m.RecalculateBounds();
+            }
+
+
+            //foreach (var pair in _farmPlots)
+            //{
+            //    var gb = GameObject.Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            //    gb.transform.position =
+            //        new Vector3(pair.Value.transform.position.x, 2, pair.Value.transform.position.z);
+            //    Debug.Log(pair.Value.transform.position);
+            //    Debug.Log(pair.Value.transform.localPosition);
+            //}
+
+            List<int> floodMonth = new List<int>() { 0, 1, 2 };
+
+            int month = args.month;
+            if (floodMonth.Contains(month))
+            {
+                // flood
+                if (month == 0)
+                {
+                }
+            }
+
+            if (month == 4)
+            {
+                // remove flood
+                // create farms
+                CreateFarms();
+            }
+        }
+
+        private void CreateFarms()
+        {
+            // TODO clean up. Farms is id 
             CfgBuilding farm = _configuration.GetCfgWorldObjectsList().Find(x => x.id == 1);
             GameObject fromResources = (GameObject)Resources.Load(farm.path);
 

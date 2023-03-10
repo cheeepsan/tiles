@@ -46,7 +46,7 @@ namespace SaveStateNS
             Dictionary<ResourceType, float> resources = _resourceManager.GetAllResources();
 
             SaveStateMasterObject saveStateMasterObject =
-                new SaveStateMasterObject(buildingsToSave, resources, _timeManager.GetCurrentTick());
+                new SaveStateMasterObject(buildingsToSave, resources, _timeManager.GetCurrentTick(), _timeManager.GetCurrentMonth());
 
             String a = JsonConvert.SerializeObject(saveStateMasterObject);
             File.WriteAllText("save.json", a);
@@ -67,6 +67,7 @@ namespace SaveStateNS
             RestoreBuildings(saveState);
             RestoreResources(saveState);
             _timeManager.SetCurrentTick(saveState.timeTick);
+            _timeManager.SetCurrentMonth(saveState.gameMonth);
         }
 
 

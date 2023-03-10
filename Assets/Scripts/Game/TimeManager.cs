@@ -50,6 +50,7 @@ namespace Game
         private float _tickTimer;
         private const float _tickMax = 0.2f;
         private int _currentMonth;
+        private String _currentMonthName;
         private int _ticksPerMonth;
         
         private void Start()
@@ -59,6 +60,7 @@ namespace Game
             _tick = 0;
             _ticksPerMonth = settings.tickPerMonth;
             _currentMonth = 0;
+            _currentMonthName = MonthConstant.GetMonthName(_currentMonth);
         }
 
         private void Update()
@@ -73,7 +75,7 @@ namespace Game
                 {
                     currentTick = _tick,
                     month = _currentMonth,
-                    monthName = MonthConstant.GetMonthName(_currentMonth)
+                    monthName = _currentMonthName
                 });
                 
                 if (_tick % 10 == 0)
@@ -92,9 +94,10 @@ namespace Game
                         On40Tick(this, new On40TickEventArgs() { tick = _tick });
                     }
                 }
+                
+                ChangeMonth();
             }
 
-            ChangeMonth();
 
         }
 
@@ -113,12 +116,13 @@ namespace Game
                 }
 
                 String monthNameConstant = MonthConstant.GetMonthName(_currentMonth);
+                _currentMonthName = monthNameConstant;
                 if (OnMonthChange != null)
                 {
                     OnMonthChange(this, new OnMonthChangeEventArgs()
                     {
                         month = _currentMonth,
-                        monthName = monthNameConstant,
+                        monthName = _currentMonthName,
                         currentTick = _tick
                     });
                 }
@@ -131,9 +135,19 @@ namespace Game
             return _tick;
         }
 
+        public int GetCurrentMonth()
+        {
+            return _currentMonth;
+        }
+        
         public void SetCurrentTick(int tick)
         {
             _tick = tick;
+        }    
+        
+        public void SetCurrentMonth(int currentMonth)
+        {
+            _currentMonth = currentMonth;
         }
     }
 }
