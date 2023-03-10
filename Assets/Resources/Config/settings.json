@@ -1,4 +1,5 @@
 {
-  "tickPerMonth": 40
+  "tickPerMonth": 40,
+  "tideMeshPath": "Meshes/TideMesh"
 }
   

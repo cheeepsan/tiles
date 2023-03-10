@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 
 namespace Util
@@ -33,5 +34,6 @@ namespace Util
     public class Settings : CfgInstance
     {
         public int tickPerMonth;
+        public String tideMeshPath;
     }
 }

@@ -7,6 +7,7 @@ using Zenject;
 using Signals.Building;
 using Signals.ResourceNS;
 using Signals.UI;
+using TideNS;
 using UnitNS;
 using UnityEngine.UI;
 using Util;
@@ -25,6 +26,7 @@ namespace Game
 
             Container.Bind<BuildingManager>().AsSingle().NonLazy();
             Container.Bind<ResourceManager>().AsSingle().NonLazy();
+            Container.Bind<TideManager>().AsSingle().NonLazy();
             
             Container.Bind<SaveState>().AsSingle().NonLazy();
 
@@ -50,6 +52,8 @@ namespace Game
                 .FromFactory<PrefabFactory<BuildingElement>>();
             Container.BindFactory<Object, FarmPlot, FarmPlotFactory>()
                 .FromFactory<PrefabFactory<FarmPlot>>();
+            Container.BindFactory<Object, TideMesh, TideMeshFactory>()
+                .FromFactory<PrefabFactory<TideMesh>>();
             
             Container.BindFactory<Object, Unit, UnitFactory>().FromFactory<PrefabFactory<Unit>>();
             

@@ -14,6 +14,7 @@ Material:
   - EFFECT_FOAM
   - EFFECT_MICROWAVE
   - EFFECT_NORMALMAP2
+  - EFFECT_PARALLAX
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -144,7 +145,7 @@ Material:
     m_Floats:
     - _Albedo2Flow: 0.9
     - _Albedo2Tiling: 0.9
-    - _AlbedoContrast: 3
+    - _AlbedoContrast: 0.75
     - _AlbedoIntensity: 5
     - _Brightness: 1
     - _BumpScale: 1
@@ -227,9 +228,9 @@ Material:
     - _RefractionSpeed: 1.61
     - _ReverseFlow: 2.3
     - _Saturation: 1
-    - _Shininess: 1
+    - _Shininess: 0.204
     - _SmoothnessTextureChannel: 0
-    - _SoftFactor: 0.122
+    - _SoftFactor: 0.203
     - _SpecularHighlights: 1
     - _Speed: 0.5
     - _SpeedX: 0.1

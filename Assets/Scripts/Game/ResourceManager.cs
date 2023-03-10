@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using BuildingNS;
+using Common;
 using GridNS;
 using ResourceNS;
 using ResourceNS.Enum;
@@ -68,51 +69,41 @@ namespace Game
              * 8 - 11 gather
              */
 
-            var list = new List<Transform>();
-            foreach (var pair in _farmPlots)
-            {
-                // transform of transform
-                list.Add(pair.Value.parent.transform);
+           //var list = new List<Transform>();
+           //foreach (var pair in _farmPlots)
+           //{
+           //    // transform of transform
+           //    list.Add(pair.Value.parent.transform);
 
-            }
+           //}
 
-            ConcaveAlgo a = new ConcaveAlgo(list);
-            List<MeshData> meshes = a.CalculateMeshes();
-            foreach (var meshData in meshes)
-            {
-                Mesh m = new Mesh
-                {
-                    name = "test mesh " + meshData.name
-                };
+           //ConcaveAlgo a = new ConcaveAlgo(list);
+           //List<MeshData> meshes = a.CalculateMeshes();
+           //foreach (var meshData in meshes)
+           //{
+           //    Mesh m = new Mesh
+           //    {
+           //        name = "test mesh " + meshData.name
+           //    };
 
-                GameObject gb = (GameObject)Resources.Load("Meshes/TideMesh");
+           //    GameObject gb = (GameObject)Resources.Load("Meshes/TideMesh");
 
-                var inst = GameObject.Instantiate(gb);
-                inst.name = meshData.name;
+           //    var inst = GameObject.Instantiate(gb);
+           //    inst.name = meshData.name;
+           //
+           //
+           //    m.vertices = meshData.triangleVertices;
+           //    m.triangles = meshData.triagnles;
+           //    m.normals = meshData.normals;
+           //    m.tangents = meshData.tangents;
+           //    m.uv = meshData.uuvs;
+           //    var center = meshData.centroid;
+           //    inst.transform.position = new Vector3((float)center.X, 0.66f, (float)center.Y);
+           //    m.RecalculateNormals();
+           //    inst.GetComponent<MeshFilter>().sharedMesh = m;
+           //    m.RecalculateBounds();
+           //}
             
-            
-                m.vertices = meshData.triangleVertices;
-                m.triangles = meshData.triagnles;
-                m.normals = meshData.normals;
-                m.tangents = meshData.tangents;
-                m.uv = meshData.uuvs;
-                var center = meshData.centroid;
-                inst.transform.position = new Vector3((float)center.X, 0.66f, (float)center.Y);
-                m.RecalculateNormals();
-                inst.GetComponent<MeshFilter>().sharedMesh = m;
-                m.RecalculateBounds();
-            }
-
-
-            //foreach (var pair in _farmPlots)
-            //{
-            //    var gb = GameObject.Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
-            //    gb.transform.position =
-            //        new Vector3(pair.Value.transform.position.x, 2, pair.Value.transform.position.z);
-            //    Debug.Log(pair.Value.transform.position);
-            //    Debug.Log(pair.Value.transform.localPosition);
-            //}
-
             List<int> floodMonth = new List<int>() { 0, 1, 2 };
 
             int month = args.month;

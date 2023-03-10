@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common;
 using NetTopologySuite.Algorithm.Hull;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Triangulate;
@@ -10,17 +11,6 @@ using UnityEngine;
 //https://www.codeproject.com/Articles/775753/A-Convex-Hull-Algorithm-and-its-implementation-in
 namespace Util
 {
-    public struct MeshData
-    {
-        public Vector3[] triangleVertices;
-        public Vector2[] uuvs;
-        public Vector3[] normals;
-        public Vector4[] tangents;
-        public int[] triagnles;
-        public Point centroid;
-        public String name;
-    }
-
     /*
      * 1. Divide points into blocks
      * 2. Find outer points for blocks
