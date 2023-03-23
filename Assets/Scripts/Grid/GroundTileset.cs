@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GridNS
 {
-    struct GroundTieData
+    struct GroundTileData
     {
         public string guid;
         public float x, y, z;
@@ -15,11 +15,11 @@ namespace GridNS
     public class GroundTileset
     {
 
-        private Dictionary<Vector3, GroundTieData> _groundTileDatas;
+        private Dictionary<Vector3, GroundTileData> _groundTileDatas;
 
         public GroundTileset()
         {
-            _groundTileDatas = new Dictionary<Vector3, GroundTieData>();
+            _groundTileDatas = new Dictionary<Vector3, GroundTileData>();
             
             Grid grid = GameObject.FindObjectOfType<Grid>();
             Transform[] tiles = 
@@ -31,7 +31,7 @@ namespace GridNS
             {
                 String tileGuid = Guid.NewGuid().ToString();
                 Vector3 pos = transform.position;
-                GroundTieData tileData = new GroundTieData()
+                GroundTileData tileData = new GroundTileData()
                 {
                     guid = tileGuid,
                     x = pos.x,
