@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 
 namespace Util
@@ -28,5 +29,11 @@ namespace Util
     {
         public string name;
         public string path;
+    }
+    [System.Serializable]
+    public class Settings : CfgInstance
+    {
+        public int tickPerMonth;
+        public String tideMeshPath;
     }
 }

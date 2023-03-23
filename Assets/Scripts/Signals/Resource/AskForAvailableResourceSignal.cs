@@ -4,6 +4,7 @@ using BuildingNS;
 using ResourceNS;
 using ResourceNS.Enum;
 using UnitNS;
+using UnityEngine;
 
 namespace Signals.ResourceNS
 {
@@ -26,5 +27,10 @@ namespace Signals.ResourceNS
     public class AddResourceToQueueSignal : IResourceSignal
     {
         public Tuple<ResourceType, float> resource;
+    }
+    
+    public class AddAvailableFarmPlotSignal : IResourceSignal
+    {
+        public Transform farmPlotTransform;
     }
 }

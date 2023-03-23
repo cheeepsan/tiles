@@ -34,6 +34,17 @@
       "name": "scribe",
       "path": "Tiles/Creatures/Scribe"
     }
+  },
+  {
+    "id": 5,
+    "name": "Smal farm",
+    "path": "Tiles/Buildings/Small_Farm",
+    "type": "small_farm",
+    "constructPerTick": 5,
+    "unit": {
+      "name": "farmer",
+      "path": "Tiles/Creatures/Farmer"
+    }
   }
 ]
   

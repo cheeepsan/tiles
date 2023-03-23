@@ -1,10 +1,11 @@
 using System;
-using System.Collections;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+
 using BuildingNS;
+using Common;
+using GridNS;
 using ResourceNS;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
@@ -22,32 +23,124 @@ namespace Game
     public class ResourceManager
     {
         [Inject] private readonly UiSignals _uiSignals;
+        [Inject] private Configuration _configuration;
+        [Inject] private FarmPlotFactory _farmPlotFactory;
+        [Inject] private GroundTileset _groundTileset;
 
         private readonly ResourceSignals _resourceSignals;
 
-        private Dictionary<string, Resource> _resources;
-        private Dictionary<string, PlaceableBuilding> _buildings;
+        private Dictionary<String, Resource> _resources;
+        private Dictionary<String, PlaceableBuilding> _buildings;
 
         private Dictionary<ResourceType, float> _accumulatedResources;
         private Queue<Tuple<ResourceType, float>> _storingQueue;
 
+        private Dictionary<String, Transform> _farmPlots;
+
         public ResourceManager(ResourceSignals resourceSignals)
         {
             _resourceSignals = resourceSignals;
-            _resources = new Dictionary<string, Resource>();
-            _buildings = new Dictionary<string, PlaceableBuilding>();
+            _resources = new Dictionary<String, Resource>();
+            _buildings = new Dictionary<String, PlaceableBuilding>();
             _accumulatedResources = new Dictionary<ResourceType, float>();
             _storingQueue = new Queue<Tuple<ResourceType, float>>(); // TODO: Is it even needed. Is it even smart
+            _farmPlots = new Dictionary<String, Transform>();
 
             TimeManager.On10Tick += delegate(object sender, TimeManager.On10TickEventArgs args)
             {
                 PingAvailableResources();
                 DequeueResourceQueue();
             };
+            
+            TimeManager.OnMonthChange += delegate(object sender, TimeManager.OnMonthChangeEventArgs args)
+            {
+
+                YearlyCycle(args);
+            };
 
             SubscribeToSignals();
         }
 
+        private void YearlyCycle(TimeManager.OnMonthChangeEventArgs args)
+        {
+            /*
+             * 0 - 3 flood
+             * 4 - 7 field works
+             * 8 - 11 gather
+             */
+
+           //var list = new List<Transform>();
+           //foreach (var pair in _farmPlots)
+           //{
+           //    // transform of transform
+           //    list.Add(pair.Value.parent.transform);
+
+           //}
+
+           //ConcaveAlgo a = new ConcaveAlgo(list);
+           //List<MeshData> meshes = a.CalculateMeshes();
+           //foreach (var meshData in meshes)
+           //{
+           //    Mesh m = new Mesh
+           //    {
+           //        name = "test mesh " + meshData.name
+           //    };
+
+           //    GameObject gb = (GameObject)Resources.Load("Meshes/TideMesh");
+
+           //    var inst = GameObject.Instantiate(gb);
+           //    inst.name = meshData.name;
+           //
+           //
+           //    m.vertices = meshData.triangleVertices;
+           //    m.triangles = meshData.triagnles;
+           //    m.normals = meshData.normals;
+           //    m.tangents = meshData.tangents;
+           //    m.uv = meshData.uuvs;
+           //    var center = meshData.centroid;
+           //    inst.transform.position = new Vector3((float)center.X, 0.66f, (float)center.Y);
+           //    m.RecalculateNormals();
+           //    inst.GetComponent<MeshFilter>().sharedMesh = m;
+           //    m.RecalculateBounds();
+           //}
+            
+            List<int> floodMonth = new List<int>() { 0, 1, 2 };
+
+            int month = args.month;
+            if (floodMonth.Contains(month))
+            {
+                // flood
+                if (month == 0)
+                {
+                }
+            }
+
+            if (month == 4)
+            {
+                // remove flood
+                // create farms
+                CreateFarms();
+            }
+        }
+
+        private void CreateFarms()
+        {
+            // TODO clean up. Farms is id 
+            CfgBuilding farm = _configuration.GetCfgWorldObjectsList().Find(x => x.id == 1);
+            GameObject fromResources = (GameObject)Resources.Load(farm.path);
+
+            int totalFarms = _buildings.Values.Count(x => x.preferredResource == ResourceType.Farm);
+            
+            foreach (var key in _farmPlots.Take(totalFarms))
+            {
+                var t = key.Value.transform;
+
+                var farmPlot = _farmPlotFactory.Create(fromResources, t);
+                farmPlot.transform.position = new Vector3(t.position.x, t.position.y + 0.5f, t.position.z);
+
+            }
+        }
+        // TODO move to stockpile manager
         private void AddResourceToQueue(Tuple<ResourceType, float> r)
         {
             _storingQueue.Enqueue(r);
@@ -116,13 +209,23 @@ namespace Game
             availableResources.Clear();
             availableBuildings.Clear();
         }
-
+        
+        private void AddFarmPlot(Transform farmPlotCoord)
+        {
+            String farmPlotGuid = _groundTileset.GetGroundTileByPosition(farmPlotCoord.position);
+            
+            if (!_farmPlots.ContainsKey(farmPlotGuid))
+            {
+                _farmPlots.Add(farmPlotGuid, farmPlotCoord);
+            }
+        }
 
         private void SubscribeToSignals()
         {
             SubscribeToResourceAvailableSignal();
             SubscribeToBuildingRegistered();
             SubscribeToAddResourceToQueue();
+            SubscribeToAddAvailableFarmPlot();
         }
 
         private void SubscribeToBuildingRegistered()
@@ -137,14 +240,20 @@ namespace Game
                 ((x) => { AddResourceToQueue(x.resource); });
         }
 
+        private void SubscribeToAddAvailableFarmPlot()
+        {
+            _resourceSignals.Subscribe<AddAvailableFarmPlotSignal>
+                ((x) => { AddFarmPlot(x.farmPlotTransform); });
+        }
+
         private void SubscribeToResourceAvailableSignal()
         {
-            Action<ResourceAvailableSignal, Dictionary<string, Resource>> ResourceAvailable = (s, d) =>
+            Action<ResourceAvailableSignal, Dictionary<String, Resource>> ResourceAvailable = (s, d) =>
             {
                 d.Add(s.resourceId, s.resource);
             };
 
-            _resourceSignals.Subscribe2<ResourceAvailableSignal, Dictionary<string, Resource>>((x, b) =>
+            _resourceSignals.Subscribe2<ResourceAvailableSignal, Dictionary<String, Resource>>((x, b) =>
                     ResourceAvailable(x, b)
                 , _resources);
         }

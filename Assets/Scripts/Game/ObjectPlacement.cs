@@ -85,11 +85,41 @@ namespace Game
                     TERRAIN_LAYER_MASK
                 ))
             {
+                var scale = _currentPlaceableObject.transform.localScale;
+
                 var currentPos = _raycastHit.transform.position;
-                var pos = new Vector3(
-                    (currentPos.x),
-                    (currentPos.y) + 1,
-                    (currentPos.z));
+                
+                Vector3 pos;
+                if (scale.magnitude < 1 ) // ??
+                {
+                    var point = _raycastHit.point;
+                    var pointX = point.x;
+                    var pointZ = point.z;
+                    
+                    Debug.Log(scale.magnitude);
+
+
+                    int offsetX = (int)((pointX - currentPos.x) / scale.x);
+                    int offsetZ = (int)((pointZ - currentPos.z) / scale.z);
+                    
+                    float offsetY = scale.y / 2;
+                    
+                    pos = new Vector3(
+                        (currentPos.x + (scale.x * offsetX)),
+                        ((currentPos.y) + (scale.y * 2) + offsetY), // ??
+                        (currentPos.z + (scale.z * offsetZ))
+                    );
+                }
+                else
+                {
+                    Debug.Log(scale.magnitude);
+                    Debug.Log(scale.normalized);
+                    pos = new Vector3(
+                        (currentPos.x),
+                        ((currentPos.y) + 1) ,
+                        (currentPos.z));
+                }
+
                 _currentPlaceableObject.transform.position = pos;
             }
             else
