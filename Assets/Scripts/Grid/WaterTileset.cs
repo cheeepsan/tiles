@@ -23,7 +23,7 @@ namespace GridNS
             
             Grid grid = GameObject.FindObjectOfType<Grid>();
             Transform[] tiles = 
-                grid.ground.GetComponentsInChildren<Transform>()
+                grid.water.GetComponentsInChildren<Transform>()
                     .Where(t => t.name == NameConstants.WATER_TILE)
                     .ToArray(); // TODO do smarter
 

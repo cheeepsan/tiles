@@ -26,7 +26,7 @@ namespace Game
 
             Container.Bind<BuildingManager>().AsSingle().NonLazy();
             Container.Bind<ResourceManager>().AsSingle().NonLazy();
-            Container.Bind<TideManager>().AsSingle().NonLazy();
+            Container.Bind<IInitializable>().To<TideManager>().AsSingle().NonLazy();
             
             Container.Bind<SaveState>().AsSingle().NonLazy();
 

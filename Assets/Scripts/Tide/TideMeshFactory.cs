@@ -12,7 +12,7 @@ namespace TideNS
             _container = container;
         }
 
-        public TideMesh Create(Object prefab)
+        public override TideMesh Create(Object prefab)
         {
             return _container.InstantiatePrefabForComponent<TideMesh>(prefab);
         }
