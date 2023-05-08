@@ -4,6 +4,7 @@ using SaveStateNS;
 using Zenject;
 using Signals.Building;
 using Signals.ResourceNS;
+using Signals.StockpileNS;
 using Signals.UI;
 using UnitNS;
 using UnityEngine.UI;
@@ -23,12 +24,14 @@ namespace Game
 
             Container.Bind<BuildingManager>().AsSingle().NonLazy();
             Container.Bind<ResourceManager>().AsSingle().NonLazy();
+            Container.Bind<StockpileManager>().AsSingle().NonLazy();
             
             Container.Bind<SaveState>().AsSingle().NonLazy();
 
             Container.Bind<UiSignals>().AsSingle().NonLazy();
             Container.Bind<BuildingSignals>().AsSingle().NonLazy();
             Container.Bind<ResourceSignals>().AsSingle().NonLazy();
+            Container.Bind<StockpileSignals>().AsSingle().NonLazy();
             
             Container.DeclareSignal<BuildingButtonClickedSignal>();
             Container.DeclareSignal<BuildingPlacedSignal>();

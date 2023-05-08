@@ -5,6 +5,7 @@ using Game;
 using ResourceNS;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
+using Signals.StockpileNS;
 using UnitNS;
 using UnityEngine;
 using Util;
@@ -15,6 +16,7 @@ namespace BuildingNS
     {
         [Inject] private readonly UnitFactory _unitFactory;
         [Inject] protected readonly ResourceSignals _resourceSignals;
+        [Inject] protected readonly StockpileSignals _stockpileSignals;
 
         private int _builtPercentage = 0;
         private CfgBuilding _buildingConfig;

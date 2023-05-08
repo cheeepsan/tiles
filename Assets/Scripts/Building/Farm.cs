@@ -9,7 +9,7 @@ namespace BuildingNS
     {
         public override void DisposeResources(Tuple<ResourceType, float> resourceTuple)
         {
-            _resourceSignals.FireAddResourceToQueue(new AddResourceToQueueSignal() {resource =  resourceTuple});
+            _stockpileSignals.FireAddResourceToQueue(new AddResourceToQueueSignal() {resource =  resourceTuple});
         }
     }
 }
