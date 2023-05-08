@@ -35,7 +35,7 @@ namespace BuildingNS
         public ResourceType preferredResource;
         
 
-        void Start()
+        public virtual void Start()
         {
             _id = Guid.NewGuid().ToString();
             canBuild = true;

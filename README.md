@@ -5,6 +5,9 @@
 - Zenject https://github.com/modesttree/Zenject
 - TextMesh PRO
 - UI Toolkit
+- #NVJOB Water Shaders V2
+- NuGetForUnity https://github.com/GlitchEnzo/NuGetForUnity
+-- https://www.nuget.org/packages/NetTopologySuite
 
 ## Editor stuff
 ### Tags

@@ -16,6 +16,13 @@ using Util;
 using Zenject;
 using Button = UnityEngine.UI.Button;
 
+struct CurrentTimeViewContainer
+{
+    public int currentTick;
+    public String currentMonthName;
+    public int currentMonthIndex;
+}
+
 public class UiRenderer : MonoBehaviour
 {
     [Inject] private Configuration _configuration;
@@ -29,11 +36,15 @@ public class UiRenderer : MonoBehaviour
     [SerializeField] public GameObject buildingButtonPanel;
     [SerializeField] public GameObject buildingInfoPanel;
     [SerializeField] public GameObject resourcesInfoPanel;
+    [SerializeField] public GameObject timeInfoPanel;
     [SerializeField] public GameObject menuButtonPanel;
     
     private TMP_Text _infoWindow;
     private TMP_Text _resourcesWindow;
+    private TMP_Text _timeWindow;
 
+    private CurrentTimeViewContainer currentTime;
+    
     void Start()
     {
         if (_configuration != null)
@@ -85,6 +96,9 @@ public class UiRenderer : MonoBehaviour
         
         _resourcesWindow = resourcesInfoPanel.GetComponentInChildren<TMP_Text>();
         _resourcesWindow.SetText("Window ready: resources");
+        
+        _timeWindow = timeInfoPanel.GetComponentInChildren<TMP_Text>();
+        _timeWindow.SetText("Window ready: time");
     }
 
     private void UpdateInfoWindow()
@@ -104,10 +118,17 @@ public class UiRenderer : MonoBehaviour
         _resourcesWindow.SetText(data);
     }
 
+    private void UpdateTimeWindow(int tick, int month, String monthName)
+    {
+        String data = $"Tick: {tick}, month {monthName}";
+        _timeWindow.SetText(data);
+    }
+    
     private void SubscribeToSignals()
     {
         SubscribeToBuildingSignals();
         SubscribeToResourceSignals();
+        SubscribeToOnTick();
     }
 
     private void SubscribeToResourceSignals()
@@ -120,5 +141,17 @@ public class UiRenderer : MonoBehaviour
     {
         Action onBuildingSignal = UpdateInfoWindow;
         _buildingSignalBus.Subscribe<BuildingPlacedSignal>(onBuildingSignal);
+    }
+
+    private void SubscribeToOnTick()
+    {
+        TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
+        {
+            int tick = args.currentTick;
+            int month = args.month;
+            String monthName = args.monthName;
+            
+            UpdateTimeWindow(tick, month, monthName);
+        };
     }
 }

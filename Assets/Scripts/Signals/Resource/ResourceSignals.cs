@@ -37,6 +37,11 @@ namespace Signals.ResourceNS
         {
             _resourceSignalBus.Fire(s);
         }
+        
+        public void FireAddAvailableFarmPlot(AddAvailableFarmPlotSignal s)
+        {
+            _resourceSignalBus.Fire(s);
+        }
 
         
         public void Subscribe<IResourceSignal>(Action<IResourceSignal> actionOnFire)
