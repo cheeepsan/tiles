@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using BuildingNS;
+using Game;
 using ResourceNS;
 using Signals.ResourceNS;
 using Unity.VisualScripting;
@@ -25,8 +26,25 @@ namespace UnitNS
             _camera = Camera.main;
             _myNavMeshAgent = GetComponent<NavMeshAgent>();
             _atWork = false;
+            SubscribeOnPauseToggle();
         }
 
+        private void SubscribeOnPauseToggle()
+        {
+            TimeManager.OnPauseToggle += delegate(object sender, TimeManager.OnPauseToggleEventArgs args)
+            {
+                bool paused = args.paused;
+                if (paused)
+                {
+                    _myNavMeshAgent.isStopped = true;
+                }
+                else
+                {
+                    _myNavMeshAgent.isStopped = false;
+                }
+            };
+        }
+        
         public virtual void SetParentBuilding(PlaceableBuilding parent)
         {
             _parentBuilding = parent;

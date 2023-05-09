@@ -25,12 +25,13 @@ struct CurrentTimeViewContainer
 
 public class UiRenderer : MonoBehaviour
 {
-    [Inject] private Configuration _configuration;
-    [Inject] private UiSignals _uiSignalBus;
-    [Inject] private BuildingSignals _buildingSignalBus;
-    [Inject] private BuildingManager _buildingManager;
+    [Inject] private readonly Configuration _configuration;
+    [Inject] private readonly UiSignals _uiSignalBus;
+    [Inject] private readonly BuildingSignals _buildingSignalBus;
+    [Inject] private readonly BuildingManager _buildingManager;
     [Inject] private readonly UiBuildingButtonFactory _buildingButtonFactory;
     [Inject] private readonly SaveState _saveState;
+    [Inject] private readonly TimeManager _timeManager;
 
     [SerializeField] public GameObject parentPanel;
     [SerializeField] public GameObject buildingButtonPanel;
@@ -90,6 +91,15 @@ public class UiRenderer : MonoBehaviour
         {
             _saveState.LoadStateFromJson();
         });
+        
+        Button pauseButton = _buildingButtonFactory.Create(menuButtonPrefab, menuButtonPanel.transform);
+        TMP_Text pauseText = pauseButton.GetComponentInChildren<TMP_Text>();
+        pauseText.SetText("Pause");
+        pauseButton.onClick.AddListener(() =>
+        {
+            _timeManager.TogglePause();
+        });
+        
         
         _infoWindow = buildingInfoPanel.GetComponentInChildren<TMP_Text>();
         _infoWindow.SetText("Window ready: buildings");

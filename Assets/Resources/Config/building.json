@@ -37,7 +37,7 @@
   },
   {
     "id": 5,
-    "name": "Smal farm",
+    "name": "Small farm",
     "path": "Tiles/Buildings/Small_Farm",
     "type": "small_farm",
     "constructPerTick": 5,
