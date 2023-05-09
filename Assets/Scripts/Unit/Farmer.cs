@@ -37,6 +37,7 @@ namespace UnitNS
             {
                 Debug.Log("Resource pos: " + _currentResource.gameObject.transform.position);
                 _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+
                 _atWork = true;
             }
         }

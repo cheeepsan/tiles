@@ -39,10 +39,17 @@ namespace Game
             public String monthName;
         }
 
+        public class OnPauseToggleEventArgs : EventArgs
+        {
+            public bool paused;
+        }
+
         public static event EventHandler<OnTickEventArgs> OnTick;
         public static event EventHandler<On10TickEventArgs> On10Tick;
         public static event EventHandler<On40TickEventArgs> On40Tick;
         public static event EventHandler<OnMonthChangeEventArgs> OnMonthChange;
+        public static event EventHandler<OnPauseToggleEventArgs> OnPauseToggle;
+        
 
         [Inject] private Configuration _configuration;
         
@@ -52,6 +59,7 @@ namespace Game
         private int _currentMonth;
         private String _currentMonthName;
         private int _ticksPerMonth;
+        private bool _paused;
         
         private void Start()
         {
@@ -61,23 +69,29 @@ namespace Game
             _ticksPerMonth = settings.tickPerMonth;
             _currentMonth = 0;
             _currentMonthName = MonthConstant.GetMonthName(_currentMonth);
+            _paused = false;
         }
 
         private void Update()
         {
+            if (_paused) return;
+            
             _tickTimer += Time.deltaTime;
             if (_tickTimer > _tickMax)
             {
                 _tickTimer -= _tickMax;
                 _tick++;
-                
-                if (OnTick != null) OnTick(this, new OnTickEventArgs()
+
+                if (OnTick != null)
                 {
-                    currentTick = _tick,
-                    month = _currentMonth,
-                    monthName = _currentMonthName
-                });
-                
+                    OnTick(this, new OnTickEventArgs()
+                    {
+                        currentTick = _tick,
+                        month = _currentMonth,
+                        monthName = _currentMonthName
+                    });
+                }
+
                 if (_tick % 10 == 0)
                 {
                     if (On10Tick != null)
@@ -86,6 +100,7 @@ namespace Game
                     }
 
                 }
+
                 // TODO JUST TESTING
                 if (_tick % 40 == 0)
                 {
@@ -94,11 +109,9 @@ namespace Game
                         On40Tick(this, new On40TickEventArgs() { tick = _tick });
                     }
                 }
-                
+
                 ChangeMonth();
             }
-
-
         }
 
         private void ChangeMonth()
@@ -148,6 +161,26 @@ namespace Game
         public void SetCurrentMonth(int currentMonth)
         {
             _currentMonth = currentMonth;
+        }
+
+        public void TogglePause()
+        {
+            if (_paused)
+            {
+                _paused = false;
+            }
+            else
+            {
+                _paused = true;
+            }
+
+            if (OnPauseToggle != null)
+            {
+                OnPauseToggle(this, new OnPauseToggleEventArgs()
+                {
+                    paused = _paused
+                });
+            }
         }
     }
 }
