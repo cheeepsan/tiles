@@ -17,6 +17,7 @@ namespace SaveStateNS
     {
         [Inject] private readonly BuildingManager _buildingManager;
         [Inject] private readonly ResourceManager _resourceManager;
+        [Inject] private readonly StockpileManager _stockpileManager;
         [Inject] private readonly TimeManager _timeManager;
         [Inject] private readonly PlaceableBuildingFactory _placeableBuildingFactory;
         [Inject] private readonly BuildingSignals _buildingSignals;
@@ -43,7 +44,7 @@ namespace SaveStateNS
                 buildingsToSave.Add(buildingSaveState);
             }
 
-            Dictionary<ResourceType, float> resources = _resourceManager.GetAllResources();
+            Dictionary<ResourceType, float> resources = _stockpileManager.GetAllResources();
 
             SaveStateMasterObject saveStateMasterObject =
                 new SaveStateMasterObject(buildingsToSave, resources, _timeManager.GetCurrentTick(), _timeManager.GetCurrentMonth());
@@ -74,7 +75,7 @@ namespace SaveStateNS
         private void RestoreResources(SaveStateMasterObject saveState)
         {
             Dictionary<ResourceType, float> resource = saveState.resources;
-            _resourceManager.SetAllResources(resource);
+            _stockpileManager.SetAllResources(resource);
         }
 
         private void RestoreBuildings(SaveStateMasterObject saveState)
