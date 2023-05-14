@@ -131,6 +131,11 @@ namespace BuildingNS
             
         }
 
+        public string GetBuildingType()
+        {
+            return _buildingConfig.type;
+        }
+        
         /*
          * GET SET
          */

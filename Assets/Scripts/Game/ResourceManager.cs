@@ -124,17 +124,48 @@ namespace Game
 
             if (availableResources.Count > 0 && availableBuildings.Count > 0)
             {
-                // todo, sort building by priorities
-                // todo, get available resources by preferred type
                 // todo, resolve buildings and resources in batch 
-
-                PlaceableBuilding building = availableBuildings.First();
-                Resource resource = availableResources.First();
-                building.SetCurrentResource(resource);
+                foreach (PlaceableBuilding building in availableBuildings)
+                {
+                    if (availableResources.Count > 0)
+                    {
+                        var preferredResource = building.preferredResource;
+                        Resource foundPreferredResource = availableResources.Find(x => x.GetResourceType() == preferredResource);
+                        if (foundPreferredResource != null)
+                        {
+                            building.SetCurrentResource(foundPreferredResource);
+                            foundPreferredResource.SetAvailable(false);
+                            availableResources.Remove(foundPreferredResource);
+                        }
+                        else
+                        {
+                            ResolveResourceForBuilding(building, availableResources);
+                        } 
+                    }
+                }
             }
 
             availableResources.Clear();
             availableBuildings.Clear();
+        }
+
+        private void ResolveResourceForBuilding(PlaceableBuilding building, List<Resource> availableResources)
+        {
+            var buildingType = building.GetBuildingType();
+            var filteredResources = buildingType switch
+            {
+                "farm" => availableResources.FindAll(x => new List<ResourceType>(){ResourceType.Fruits}.Contains(x.GetResourceType())),
+                "small_farm" => availableResources.FindAll(x => new List<ResourceType>(){ResourceType.Fruits}.Contains(x.GetResourceType())),
+                _ => new List<Resource>()
+            };
+
+            if (filteredResources.Count > 0)
+            {
+                var resourceToGive = filteredResources.First();
+                building.SetCurrentResource(resourceToGive);
+                resourceToGive.SetAvailable(false);
+                availableResources.Remove(resourceToGive);
+            }
         }
         
         private void AddFarmPlot(Transform farmPlotCoord)

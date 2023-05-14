@@ -13,10 +13,13 @@ namespace BuildingNS
             base.Start();
             preferredResource = ResourceType.Farm;
         }
-
+        
+        // TODO: DO BEFORE/AFTER Dispose in generic way
         public override void DisposeResources(Tuple<ResourceType, float> resourceTuple)
         {
             _stockpileSignals.FireAddResourceToQueue(new AddResourceToQueueSignal() {resource =  resourceTuple});
+            this.SetAvailable(true); // ?????
+            this.GetCurrentResource().SetAvailable(true);
         }
     }
 }
