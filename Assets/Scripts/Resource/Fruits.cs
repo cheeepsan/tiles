@@ -1,5 +1,6 @@
 
 using ResourceNS.Enum;
+using UnitNS;
 
 namespace ResourceNS
 {
@@ -10,6 +11,11 @@ namespace ResourceNS
             base.Start();
             resourceType = ResourceType.Fruits;
             yield = 5f;
+        }
+
+        public override void ResourceHandling(Unit unit)
+        {
+            
         }
     }
 }

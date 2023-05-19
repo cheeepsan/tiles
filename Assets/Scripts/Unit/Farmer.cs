@@ -50,6 +50,7 @@ namespace UnitNS
                 {
                     //Debug.Log("Trigger, resource");
                     _isGathering = true;
+                    _currentResource.ResourceHandling(this);
                 }
                 else if (other.gameObject == _parentBuilding.gameObject)
                 {

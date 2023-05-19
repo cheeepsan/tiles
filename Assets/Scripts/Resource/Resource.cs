@@ -1,6 +1,7 @@
 using System;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
+using UnitNS;
 using UnityEngine;
 using Zenject;
 
@@ -26,6 +27,11 @@ namespace ResourceNS
                 resourceId = _resourceUuid,
                 resource = this // todo not sending monobehaviour?
             });
+        }
+
+        public virtual void ResourceHandling(Unit unit)
+        {
+           
         }
 
         public virtual float GetYield()
