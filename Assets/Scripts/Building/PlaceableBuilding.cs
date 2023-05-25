@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game;
-using JetBrains.Annotations;
 using ResourceNS;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
@@ -26,7 +25,7 @@ namespace BuildingNS
         private bool _isLoaded = false;
         private Camera _camera;
         
-        [CanBeNull] private Resource _currentResource;
+        private Resource _currentResource;
         private List<Unit> _workers; // todo change to array
 
         private string _id;
