@@ -34,7 +34,7 @@ namespace UnitNS
 
         public override void Work()
         {
-            if (_currentResource != null && !_atWork)
+            if (_currentResource != null && _currentResource.gameObject != null && !_atWork)
             {
                 Debug.Log("Resource pos: " + _currentResource.gameObject.transform.position);
                 _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
@@ -115,7 +115,14 @@ namespace UnitNS
                     _isDisposingResources = false;
                     _currentResource.ZeroYield();
                     _gatheredResourceAmount = Tuple.Create(ResourceType.Unknown, 0f);
-                    _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+                    if (_currentResource != null && _currentResource.gameObject != null)
+                    {
+                        _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+                    }
+                    else
+                    {
+                        _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
+                    }
                 }
             }
         }

@@ -31,14 +31,21 @@ namespace Game
 
         private Dictionary<String, Resource> _resources;
         private Dictionary<String, PlaceableBuilding> _buildings;
+        private Dictionary<String, String> _assignedResourceToBuilding;
+        private Dictionary<String, String> _assignedBuildingToResource; // TODO ???
 
         private Dictionary<String, Transform> _farmPlots;
+        
+        private GameObject _hierarchyParent;
         public ResourceManager(ResourceSignals resourceSignals)
         {
+            _hierarchyParent = GameObject.Find("Objects"); // hack, move to own static class
             _resourceSignals = resourceSignals;
             _resources = new Dictionary<string, Resource>();
             _buildings = new Dictionary<string, PlaceableBuilding>();
-
+            _assignedResourceToBuilding = new Dictionary<string, string>();
+            _assignedBuildingToResource = new Dictionary<string, string>();
+            
             _farmPlots = new Dictionary<String, Transform>();
             TimeManager.On10Tick += delegate(object sender, TimeManager.On10TickEventArgs args)
             {
@@ -90,11 +97,11 @@ namespace Game
 
             int totalFarms = _buildings.Values.Count(x => x.preferredResource == ResourceType.Farm);
             
-            foreach (var key in _farmPlots.Take(totalFarms))
+            foreach (var key in _farmPlots.Take(totalFarms * 2))
             {
                 var t = key.Value.transform;
 
-                var farmPlot = _farmPlotFactory.Create(fromResources, t);
+                var farmPlot = _farmPlotFactory.Create(fromResources,  _hierarchyParent.transform);
                 farmPlot.transform.position = new Vector3(t.position.x, t.position.y + 0.5f, t.position.z);
 
             }
@@ -133,9 +140,15 @@ namespace Game
                         Resource foundPreferredResource = availableResources.Find(x => x.GetResourceType() == preferredResource);
                         if (foundPreferredResource != null)
                         {
+                            FreeCurrentResourceOfBuilding(building); // free prev resource for next cycle
+                            
                             building.SetCurrentResource(foundPreferredResource);
                             foundPreferredResource.SetAvailable(false);
                             availableResources.Remove(foundPreferredResource);
+                            
+                            
+                            _assignedResourceToBuilding[foundPreferredResource.GetId()] = building.GetId();
+                            _assignedBuildingToResource[building.GetId()] = foundPreferredResource.GetId();
                         }
                         else
                         {
@@ -148,7 +161,7 @@ namespace Game
             availableResources.Clear();
             availableBuildings.Clear();
         }
-
+        
         private void ResolveResourceForBuilding(PlaceableBuilding building, List<Resource> availableResources)
         {
             var buildingType = building.GetBuildingType();
@@ -161,13 +174,26 @@ namespace Game
 
             if (filteredResources.Count > 0)
             {
+                FreeCurrentResourceOfBuilding(building); // free prev resource for next cycle
+                
                 var resourceToGive = filteredResources.First();
                 building.SetCurrentResource(resourceToGive);
                 resourceToGive.SetAvailable(false);
                 availableResources.Remove(resourceToGive);
+                _assignedResourceToBuilding[resourceToGive.GetId()] = building.GetId();
+                _assignedBuildingToResource[building.GetId()] = resourceToGive.GetId();
             }
         }
-        
+
+        private void FreeCurrentResourceOfBuilding(PlaceableBuilding building)
+        {
+            var currentResource = building.GetCurrentResource();
+            if (currentResource != null)
+            {
+                currentResource.SetAvailable(true);
+            }
+        }
+
         private void AddFarmPlot(Transform farmPlotCoord)
         {
             String farmPlotGuid = _groundTileset.GetGroundTileByPosition(farmPlotCoord.position);
@@ -183,8 +209,24 @@ namespace Game
             SubscribeToResourceAvailableSignal();
             SubscribeToBuildingRegistered();
             SubscribeToAddAvailableFarmPlot();
+            SubscribeToResourceDepleted();
         }
 
+        private void SubscribeToResourceDepleted()
+        {
+            _resourceSignals.Subscribe<ResourceDepleted>
+                ((r) =>
+                {
+                    var reseource = r.depletedResource;
+                    var resourceUuid = reseource.GetId();
+                    this._resources.Remove(resourceUuid);
+                    var buildingUuid = _assignedResourceToBuilding[resourceUuid];
+                    this._buildings[buildingUuid].SetAvailable(true);
+
+                    GameObject.Destroy(reseource.gameObject);
+                });
+        }
+        
         private void SubscribeToBuildingRegistered()
         {
             _resourceSignals.Subscribe<RegisterBuildingSignal>

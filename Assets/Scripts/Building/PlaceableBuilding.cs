@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game;
+using JetBrains.Annotations;
 using ResourceNS;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
@@ -25,7 +26,7 @@ namespace BuildingNS
         private bool _isLoaded = false;
         private Camera _camera;
         
-        private Resource _currentResource;
+        [CanBeNull] private Resource _currentResource;
         private List<Unit> _workers; // todo change to array
 
         private string _id;
@@ -71,8 +72,8 @@ namespace BuildingNS
         {
             _builtPercentage = 100;
             _isBuilding = false;
-            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
             _isAvailable = true;
+            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
             
             SpawnWorker();
         }

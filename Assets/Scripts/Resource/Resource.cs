@@ -10,14 +10,14 @@ namespace ResourceNS
 {
     public class Resource : MonoBehaviour
     {
-        [Inject] private ResourceSignals _resourceSignals;
+        [Inject] protected ResourceSignals _resourceSignals;
 
         protected string resourceUuid;
         private bool _isAvailable;
         
         protected ResourceType? resourceType; // TODO: MOVE TO CONF
         protected float? yield;
-        
+
         public virtual void Start()
         {
             resourceUuid = Guid.NewGuid().ToString();
@@ -75,6 +75,11 @@ namespace ResourceNS
         public bool IsAvailable()
         {
             return _isAvailable;
+        }
+
+        public string GetId()
+        {
+            return this.resourceUuid;
         }
     }
 }

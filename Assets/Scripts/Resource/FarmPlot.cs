@@ -1,5 +1,6 @@
 using ExceptionNS.Resource;
 using ResourceNS.Enum;
+using Signals.ResourceNS;
 using UnitNS;
 using UnityEngine;
 
@@ -8,7 +9,8 @@ namespace ResourceNS
     public enum FarmPlotStatus
     {
         Building,
-        Ready
+        Ready,
+        Depleted
     }
     
     public class FarmPlot : Resource
@@ -20,7 +22,7 @@ namespace ResourceNS
         private float _timeToGather = 10;
         private float _constructPerTick = 10f;
         private float _yieldPerTick = 5f;
-        private float _maxYield = 420f;
+        private float _maxYield = 15;
         //
         private float _accumulatedYield = 0f;
         private float _builtPercentage = 0f;
@@ -51,19 +53,45 @@ namespace ResourceNS
                     _builtPercentage = intermediateBuiltPercentage;
                 }
             }
+            else if (_farmPlotStatus == FarmPlotStatus.Ready)
+            {
+                float intermediateYield = _accumulatedYield + _yieldPerTick;
+                if (intermediateYield >= _maxYield)
+                {
+                    float difference = _maxYield - _accumulatedYield;
+                    if (difference > 0)
+                    {
+                        yield = difference;
+                    }
+                    
+                    _resourceSignals.FireResourceDepleted(new ResourceDepleted(){depletedResource = this});
+                    _farmPlotStatus = FarmPlotStatus.Depleted;
+                }
+                else
+                {
+                    yield += intermediateYield;
+                }
+            }
             else
             {
-                yield = yield.Value + _yieldPerTick;
+                Debug.Log("Farm ready to delete");
             }
         }
 
         public override float GetYield()
         {
+
+            var possibleYield = 0f;
+            if (yield.HasValue)
+            {
+                possibleYield = yield.Value;
+            }
             
             float yieldForResource = _farmPlotStatus switch
             {
                 FarmPlotStatus.Building => 0f,
-                FarmPlotStatus.Ready => yield.Value,
+                FarmPlotStatus.Ready => possibleYield,
+                FarmPlotStatus.Depleted => 0f,
                 _ => throw new ResourceNotAvailableException("Resource not available, type: FarmPlot, id: " + base.resourceUuid)
             };
             
@@ -79,6 +107,7 @@ namespace ResourceNS
             {
                 FarmPlotStatus.Building => _timeToBuild,
                 FarmPlotStatus.Ready => _timeToGather,
+                FarmPlotStatus.Depleted => 0f,
                 _ => throw new ResourceNotAvailableException("Resource not available, type: FarmPlot, id: " + base.resourceUuid)
             };
             
@@ -104,7 +133,7 @@ namespace ResourceNS
 
         public override void ZeroYield()
         {
-            _accumulatedYield = _accumulatedYield + yield.Value;
+            _accumulatedYield += yield.Value;
             base.ZeroYield();
 
         }

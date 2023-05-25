@@ -49,6 +49,7 @@ namespace Game
             Container.DeclareSignal<AddResourceToQueueSignal>();
             Container.DeclareSignal<AddAvailableFarmPlotSignal>();
             Container.DeclareSignal<UpdateResourcesViewSignal>();
+            Container.DeclareSignal<ResourceDepleted>();
             
             Container.BindFactory<Object, PlaceableBuilding, PlaceableBuildingFactory>()
                 .FromFactory<PrefabFactory<PlaceableBuilding>>();
