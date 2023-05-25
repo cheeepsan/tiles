@@ -83,7 +83,11 @@ namespace Game
         {
             foreach (var mesh in _createdMeshes)
             {
-                GameObject.Destroy(mesh.gameObject);
+                if (mesh != null)
+                {
+                    GameObject.Destroy(mesh.gameObject);
+                }
+
             }
         }
         private void GenerateTide()

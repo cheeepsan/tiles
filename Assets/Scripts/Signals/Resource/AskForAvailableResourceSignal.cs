@@ -33,4 +33,9 @@ namespace Signals.ResourceNS
     {
         public Transform farmPlotTransform;
     }
+
+    public class ResourceDepleted : IResourceSignal
+    {
+        public Resource depletedResource;
+    }
 }

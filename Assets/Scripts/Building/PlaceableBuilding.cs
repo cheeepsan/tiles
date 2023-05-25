@@ -71,8 +71,8 @@ namespace BuildingNS
         {
             _builtPercentage = 100;
             _isBuilding = false;
-            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
             _isAvailable = true;
+            _resourceSignals.FireRegisterBuilding( new RegisterBuildingSignal() { sender = this}) ;
             
             SpawnWorker();
         }
@@ -131,6 +131,11 @@ namespace BuildingNS
             
         }
 
+        public string GetBuildingType()
+        {
+            return _buildingConfig.type;
+        }
+        
         /*
          * GET SET
          */
