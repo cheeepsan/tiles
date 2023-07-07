@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace Util
@@ -17,7 +18,7 @@ namespace Util
         public string type;
         public int constructPerTick;
         [CanBeNull] public CfgUnit unit;
-
+        [CanBeNull] public List<int> prerequisite;
         public override string ToString()
         {
             return $"id: {id}, name: {name}, path: {path}, type: {type}";

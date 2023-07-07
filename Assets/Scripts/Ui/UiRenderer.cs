@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BuildingNS;
 using Game;
+using ModestTree;
 using ResourceNS.Enum;
 using SaveStateNS;
 using Signals.Building;
@@ -39,7 +40,9 @@ public class UiRenderer : MonoBehaviour
     [SerializeField] public GameObject resourcesInfoPanel;
     [SerializeField] public GameObject timeInfoPanel;
     [SerializeField] public GameObject menuButtonPanel;
-    
+
+    private Dictionary<int, Button> buildingButtonDict;
+
     private TMP_Text _infoWindow;
     private TMP_Text _resourcesWindow;
     private TMP_Text _timeWindow;
@@ -48,6 +51,8 @@ public class UiRenderer : MonoBehaviour
     
     void Start()
     {
+        buildingButtonDict = new Dictionary<int, Button>();
+        
         if (_configuration != null)
         {
             Instantiate();
@@ -66,6 +71,18 @@ public class UiRenderer : MonoBehaviour
             Button button = _buildingButtonFactory.Create(buttonPrefab, buildingButtonPanel.transform);
             TMP_Text text = button.GetComponentInChildren<TMP_Text>();
             text.SetText(currentBuilding.name);
+            
+            buildingButtonDict.Add(currentBuilding.id, button);
+            
+            if (currentBuilding.prerequisite.IsEmpty())
+            {
+                button.interactable = true;
+            }
+            else
+            {
+                button.interactable = false;
+            }
+            
             button.onClick.AddListener(() =>
             {
                 _uiSignalBus.FireBuildingButtonEvent(new BuildingButtonClickedSignal
@@ -110,9 +127,27 @@ public class UiRenderer : MonoBehaviour
         _timeWindow = timeInfoPanel.GetComponentInChildren<TMP_Text>();
         _timeWindow.SetText("Window ready: time");
     }
-
+    /*
+     * TODO:
+     *  This is a dangerous event, since it's being triggered by same action as SubscribeOnBuildingPlacedEvent in
+     *  BuildingManager. Probably because UIRenderer is created later then BuildingManager it retrieves updated data
+     *  from BuildingManager. This should be called AFTER SubscribeOnBuildingPlacedEvent in controllable manner. Should
+     *  be refactored later
+     */
     private void UpdateInfoWindow()
     {
+        List<int> builtBuildings = _buildingManager.GetBuiltUniqueBuildingList();
+        
+        foreach (var cfgBuilding in _configuration.GetCfgBuildingList())
+        {
+            bool prerequisiteComplete = cfgBuilding.prerequisite.TrueForAll(x => builtBuildings.Contains(x));
+            Button btn = buildingButtonDict[cfgBuilding.id];
+            if (prerequisiteComplete && !btn.IsInteractable())
+            {
+                btn.interactable = true;
+            }
+        }
+        
         string buildingManagerStatus = _buildingManager.GetStateInfo();
         _infoWindow.SetText(buildingManagerStatus);
     }

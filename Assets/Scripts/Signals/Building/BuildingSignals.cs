@@ -38,5 +38,9 @@ namespace Signals.Building
         {
             _buildingSignalBus.Subscribe(typeof(IBuildingSignal), (obj) => { actionOnFire((IBuildingSignal)obj, a); });
         }
+        public void Subscribe3<IBuildingSignal, T, K>(Action<IBuildingSignal, T, K> actionOnFire, T a, K b)
+        {
+            _buildingSignalBus.Subscribe(typeof(IBuildingSignal), (obj) => { actionOnFire((IBuildingSignal)obj, a, b); });
+        }
     }
 }

@@ -5,9 +5,9 @@
 - Zenject https://github.com/modesttree/Zenject
 - TextMesh PRO
 - UI Toolkit
-- #NVJOB Water Shaders V2
 - NuGetForUnity https://github.com/GlitchEnzo/NuGetForUnity
--- https://www.nuget.org/packages/NetTopologySuite
+-- https://www.nuget.org/packages/LoycCore/
+- Splines https://docs.unity3d.com/Packages/com.unity.splines@2.3/api/index.html
 
 ## Editor stuff
 ### Tags
@@ -22,3 +22,6 @@
 Window -> panels -> tile palette -> Bottom left "Default Brush" change to Game Object brush -> select game object.
 
 After placing, check that tile is in correct layer. In case of base tiles - Layer 6, terrain
+
+###
+https://catlikecoding.com/unity/tutorials/procedural-meshes/creating-a-mesh/
