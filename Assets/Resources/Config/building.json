@@ -4,7 +4,8 @@
     "name": "Worker",
     "path": "Tiles/Buildings/Worker",
     "type": "worker_house",
-    "constructPerTick": 5
+    "constructPerTick": 5,
+    "prerequisite": [4, 2, 3]
   },
   {
     "id": 2,
@@ -12,6 +13,7 @@
     "path": "Tiles/Buildings/Farm",
     "type": "farm",
     "constructPerTick": 5,
+    "prerequisite": [4],
     "unit": {
       "name": "farmer",
       "path": "Tiles/Creatures/Farmer"
@@ -22,7 +24,8 @@
     "name": "Shop",
     "path": "Tiles/Buildings/Shop",
     "type": "shop",
-    "constructPerTick": 6
+    "constructPerTick": 6,
+    "prerequisite": [4]
   },
   {
     "id": 4,
@@ -30,6 +33,7 @@
     "path": "Tiles/Buildings/Palace",
     "type": "palace",
     "constructPerTick": 5,
+    "prerequisite": [],
     "unit": {
       "name": "scribe",
       "path": "Tiles/Creatures/Scribe"
@@ -41,6 +45,7 @@
     "path": "Tiles/Buildings/Small_Farm",
     "type": "small_farm",
     "constructPerTick": 5,
+    "prerequisite": [4],
     "unit": {
       "name": "farmer",
       "path": "Tiles/Creatures/Farmer"
