@@ -196,7 +196,7 @@ namespace Game
                 Vector3 buildingPos = _currentPlaceableBuilding.transform.position;
                 PlaceableBuilding[] anchors = 
                     _buildingManager.GetAllBuildings().Values.
-                        Where(x => x.GetBuildingConfig().id == 4).ToArray();
+                        Where(x => x.GetBuildingConfig().id == BuildingConstants.PALACE_ID).ToArray();
                 float distance = 0;
                 foreach (var anchor in anchors)
                 {
