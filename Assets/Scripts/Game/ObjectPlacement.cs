@@ -44,14 +44,17 @@ namespace Game
         private GameObject _hierarchyParent;
 
         private SplineContainer _splineContainer;
-        private LineRenderer _lineRenderer;
+        private LineRenderer _curveLineRenderer;
+        
         private NavMeshPath _navMeshPathHelper;
         private bool _navMeshPathComplete = false;
         void Start()
         {
+
             _splineContainer = gameObject.AddComponent<SplineContainer>();
-            _lineRenderer = gameObject.AddComponent<LineRenderer>();
-            _lineRenderer.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+            _curveLineRenderer = gameObject.AddComponent<LineRenderer>();
+            _curveLineRenderer.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+            
             _navMeshPathHelper = new NavMeshPath();
             
             _hierarchyParent = GameObject.Find("Objects"); // hack, move to own static class
@@ -68,7 +71,20 @@ namespace Game
         {
             if (_objectInPlacement && _currentPlaceableObject != null)
             {
+                Rotation();
                 Placement();
+            }
+        }
+        
+        private void Rotation()
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                _currentPlaceableObject.transform.Rotate(0, 90, 0);
+                
+            } else if (Input.GetKeyDown(KeyCode.E))
+            {
+                _currentPlaceableObject.transform.Rotate(0, -90, 0);
             }
         }
 
@@ -85,10 +101,11 @@ namespace Game
             _currentPlaceableObject = instantiatedBuilding.gameObject;
             _currentPlaceableBuilding = instantiatedBuilding;
             _currentPlaceableBuilding.SetBuildingConfig(_selectedObject.GetBuildingConfiguration()); // TODO: Unify Building and PlaceableBuilding?    
-            
+
             var position = _currentPlaceableObject.transform.position;
             position.Set(position.x, 1f, position.z);
             _currentPlaceableObject.transform.position = position;
+
             if (_currentPlaceableBuilding.GetBuildingConfig().id == BuildingConstants.PALACE_ID)
             {
                 _navMeshPathComplete = true;
@@ -101,6 +118,7 @@ namespace Game
 
         private void Placement()
         {
+            
             _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(
                     _ray,
@@ -109,6 +127,7 @@ namespace Game
                     TERRAIN_LAYER_MASK
                 ))
             {
+          
                 var scale = _currentPlaceableObject.transform.localScale;
 
                 var currentPos = _raycastHit.transform.position;
@@ -145,7 +164,7 @@ namespace Game
                 }
 
                 _currentPlaceableObject.transform.position = pos;
-                
+
                 // TODO in case of multiple palaces anchor should be recalculated
                 if (_currentPlaceableAnchor != null)
                 {
@@ -162,7 +181,7 @@ namespace Game
                 Destroy(_currentPlaceableObject);
                 _objectInPlacement = false;
                 _currentPlaceableAnchor = null;
-                DisableLineRenderer();
+                DisableCurveLineRenderer();
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -183,7 +202,7 @@ namespace Game
                     _currentPlaceableObject = null;
                     _currentPlaceableBuilding = null;
                     _currentPlaceableAnchor = null;
-                    DisableLineRenderer();
+                    DisableCurveLineRenderer();
                 }
             }
         }
@@ -215,14 +234,14 @@ namespace Game
 
             if (_currentPlaceableAnchor != null)
             {
-                EnableLineRenderer();
+                EnableCurveLineRenderer();
                 Curve(_currentPlaceableAnchor.transform, _currentPlaceableBuilding.transform);
             }
         }
 
         private void Curve(Transform initPos, Transform buildingPos)
         {
-            if (_lineRenderer.enabled)
+            if (_curveLineRenderer.enabled)
             {
                 // Create a new Spline on the SplineContainer.
                 Spline spline = null; 
@@ -264,12 +283,12 @@ namespace Game
                 
                 spline.Clear();
                 
-                _lineRenderer.positionCount = p.Count;
-                _lineRenderer.startWidth = 0.1f;
-                _lineRenderer.endWidth = 0.1f;
-                _lineRenderer.numCornerVertices = 40;
-                _lineRenderer.SetPositions(p.ToArray());
-                _lineRenderer.loop = false;
+                _curveLineRenderer.positionCount = p.Count;
+                _curveLineRenderer.startWidth = 0.1f;
+                _curveLineRenderer.endWidth = 0.1f;
+                _curveLineRenderer.numCornerVertices = 40;
+                _curveLineRenderer.SetPositions(p.ToArray());
+                _curveLineRenderer.loop = false;
 
 
                 // MASK == 1 == WALKABLE
@@ -280,25 +299,25 @@ namespace Game
                 
                 if (_currentPlaceableBuilding.canBuild && _navMeshPathComplete)
                 {
-                    _lineRenderer.startColor = Color.green;
-                    _lineRenderer.endColor = Color.green;
+                    _curveLineRenderer.startColor = Color.green;
+                    _curveLineRenderer.endColor = Color.green;
                 }
                 else
                 {
-                    _lineRenderer.startColor = Color.red;
-                    _lineRenderer.endColor = Color.red;
+                    _curveLineRenderer.startColor = Color.red;
+                    _curveLineRenderer.endColor = Color.red;
                 }
             }
         }
         
-        private void DisableLineRenderer()
+        private void DisableCurveLineRenderer()
         {
-            _lineRenderer.enabled = false;
+            _curveLineRenderer.enabled = false;
         }
 
-        private void EnableLineRenderer()
+        private void EnableCurveLineRenderer()
         {
-            _lineRenderer.enabled = true;
+            _curveLineRenderer.enabled = true;
         }
 
         // Subscribes
