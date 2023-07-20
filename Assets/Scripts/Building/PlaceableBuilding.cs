@@ -108,11 +108,15 @@ namespace BuildingNS
             if (_buildingConfig.unit != null)
             {
                 GameObject unitGb = (GameObject)Resources.Load(_buildingConfig.unit.path);
+                //Reason for this.transform.parent.transform is that unit cannot be a child of object it is colliding with
+                // instead of FarmGameobject -> FarmCube -> Farmer
+                // FarmGameobject -> FarmCube AND FarmGameobject -> Farmer
                 Unit unit = _unitFactory.Create(unitGb, this.transform.parent.transform);
-
-                Vector3 parentPosition = this.transform.position;
+                // TODO hack 
+                //var updatedTransform = new Vector3(unit.transform.position.x, 0.5f, unit.transform.position.z);
+                //Vector3 parentPosition = this.transform.position;
                 
-                unit.transform.position = parentPosition;
+                //unit.transform.position = updatedTransform;
                 unit.SetParentBuilding(this);
                 _workers.Add(unit);
             }

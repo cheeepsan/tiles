@@ -49,5 +49,10 @@ namespace GridNS
         {
             return _groundTileDatas[pos].guid;
         }
+        
+        public List<Vector3> GetAllGroundPos()
+        {
+            return _groundTileDatas.Select(x => x.Key).ToList();
+        }
     }
 }
