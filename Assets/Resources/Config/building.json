@@ -5,20 +5,20 @@
     "path": "Tiles/Buildings/Worker",
     "type": "worker_house",
     "constructPerTick": 5,
-    "prerequisite": [4, 2, 3]
+    "prerequisite": [4]
   },
-  {
-    "id": 2,
-    "name": "Farm",
-    "path": "Tiles/Buildings/Farm",
-    "type": "farm",
-    "constructPerTick": 5,
-    "prerequisite": [4],
-    "unit": {
-      "name": "farmer",
-      "path": "Tiles/Creatures/Farmer"
-    }
-  },
+  //{
+  //  "id": 2,
+  //  "name": "Farm",
+  //  "path": "Tiles/Buildings/Farm",
+  //  "type": "farm",
+  //  "constructPerTick": 5,
+  //  "prerequisite": [4],
+  //  "unit": {
+  //    "name": "farmer",
+  //    "path": "Tiles/Creatures/Farmer"
+  //  }
+  //},
   {
     "id": 3,
     "name": "Shop",

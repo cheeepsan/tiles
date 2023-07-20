@@ -89,6 +89,8 @@ namespace Game
                 }
 
             }
+            
+            _floodActive = false;
         }
         private void GenerateTide()
         {

@@ -17,7 +17,8 @@ namespace TideNS
              * REASON FOR: otherGb.transform.parent.gameObject.name is that coordinates are stored in parents,
              * while logic is within child. TODO maybe mimic transform in children? How?
              */
-            if (otherGb.layer == 6 && otherGb.transform.parent.gameObject.name == NameConstants.GROUND_TILE)
+            if (otherGb.layer == 6 &&
+                (otherGb.transform.parent != null && otherGb.transform.parent.gameObject.name == NameConstants.GROUND_TILE))
             {
                 _resourceSignals.FireAddAvailableFarmPlot(
                     new AddAvailableFarmPlotSignal()
