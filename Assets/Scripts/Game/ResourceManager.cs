@@ -5,6 +5,7 @@ using System.Linq;
 
 using BuildingNS;
 using Common;
+using Constant;
 using GridNS;
 using ResourceNS;
 using ResourceNS.Enum;
@@ -92,7 +93,7 @@ namespace Game
         private void CreateFarms()
         {
             // TODO clean up. Farms is id 
-            CfgBuilding farm = _configuration.GetCfgWorldObjectsList().Find(x => x.id == 1);
+            CfgBuilding farm = _configuration.GetCfgWorldObjectsList().Find(x => x.id == ResourceConstants.FARM_ID);
             GameObject fromResources = (GameObject)Resources.Load(farm.path);
 
             int totalFarms = _buildings.Values.Count(x => x.preferredResource == ResourceType.Farm);

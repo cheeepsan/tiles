@@ -113,10 +113,9 @@ namespace BuildingNS
                 // FarmGameobject -> FarmCube AND FarmGameobject -> Farmer
                 Unit unit = _unitFactory.Create(unitGb, this.transform.parent.transform);
                 // TODO hack 
-                //var updatedTransform = new Vector3(unit.transform.position.x, 0.5f, unit.transform.position.z);
-                //Vector3 parentPosition = this.transform.position;
+                Vector3 parentPosition = this.transform.position;
                 
-                //unit.transform.position = updatedTransform;
+                unit.transform.position = parentPosition;
                 unit.SetParentBuilding(this);
                 _workers.Add(unit);
             }
