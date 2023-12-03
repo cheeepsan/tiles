@@ -8,8 +8,6 @@ namespace CameraNS
     public class CameraController : MonoBehaviour
     {
         public float ScreenEdgeBorderThickness = 5.0f; // distance from screen edge. Used for mouse movement
-        
-        public bool FlyCameraMode = false;
 
         [Header("Movement Speeds")] [Space] public float minPanSpeed;
         public float maxPanSpeed;
@@ -49,10 +47,7 @@ namespace CameraNS
         void Update()
         {
             # region Camera Mode
-
-            //check that ony one mode is choosen
-           //if (RTSMode == true) FlyCameraMode = false;
-           //if (FlyCameraMode == true) RTSMode = false;
+            
 
             # endregion
 
@@ -81,18 +76,16 @@ namespace CameraNS
                 //pos.x += panSpeed * Time.deltaTime;
             }
 
-            //if (Input.GetKey(KeyCode.Q))
-            //{
-            //    panMovement += Vector3.up * panSpeed * Time.deltaTime;
-            //}
-//
-            //if (Input.GetKey(KeyCode.E))
-            //{
-            //    panMovement += Vector3.down * panSpeed * Time.deltaTime;
-            //}
+            if (Input.GetKey(KeyCode.Q))
+            {
+                panMovement += Vector3.up * panSpeed * Time.deltaTime;
+            }
 
-            //if (RTSMode) transform.Translate(panMovement, Space.World);
-            //else if (FlyCameraMode) transform.Translate(panMovement, Space.Self);
+            if (Input.GetKey(KeyCode.E))
+            {
+                panMovement += Vector3.down * panSpeed * Time.deltaTime;
+            }
+            
             transform.Translate(panMovement, Space.World);
 
             //increase pan speed
@@ -127,7 +120,7 @@ namespace CameraNS
             if (rotationEnabled)
             {
                 // Mouse Rotation
-                if (Input.GetMouseButton(0))
+                if (Input.GetMouseButton(2))
                 {
                     rotationActive = true;
                     Vector3 mouseDelta;
@@ -155,8 +148,6 @@ namespace CameraNS
                 if (Input.GetMouseButtonUp(0))
                 {
                     rotationActive = false;
-                    //if (RTSMode)
-                    //    transform.rotation = Quaternion.Slerp(transform.rotation, initialRot, 0.5f * Time.time);
                 }
 
                 lastMousePosition = Input.mousePosition;
