@@ -1,88 +1,174 @@
 using UnityEngine;
 using System.Collections;
 
-//https://gist.github.com/FreyaHolmer/650ecd551562352120445513efa1d952
+//https://github.com/PanMig/Unity-RTS-Camera/blob/master/Assets/Scripts/RTSCameraController.cs
 namespace CameraNS
 {
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
-        public float acceleration = 50; // how fast you accelerate
-        public float accSprintMultiplier = 4; // how much faster you go when "sprinting"
-        public float lookSensitivity = 1; // mouse look sensitivity
-        public float dampingCoefficient = 5; // how quickly you break to a halt after you stop your input
-        public bool focusOnEnable = false; // whether or not to focus and lock cursor immediately on enable
+        public float ScreenEdgeBorderThickness = 5.0f; // distance from screen edge. Used for mouse movement
 
-        Vector3 velocity; // current velocity
+        [Header("Movement Speeds")] [Space] public float minPanSpeed;
+        public float maxPanSpeed;
+        public float secToMaxSpeed; //seconds taken to reach max speed;
+        public float zoomSpeed;
 
-        static bool Focused
+        [Header("Movement Limits")] [Space] public bool enableMovementLimits;
+        public Vector2 heightLimit;
+        public Vector2 lenghtLimit;
+        public Vector2 widthLimit;
+        private Vector2 zoomLimit;
+
+        private float panSpeed;
+        private Vector3 initialPos;
+        private Vector3 panMovement;
+        private Vector3 pos;
+        private Quaternion rot;
+        private bool rotationActive = false;
+        private Vector3 lastMousePosition;
+        private Quaternion initialRot;
+        private float panIncrease = 0.0f;
+
+        [Header("Rotation")] [Space] public bool rotationEnabled;
+        public float rotateSpeed;
+
+
+        // Use this for initialization
+        void Start()
         {
-            get => Cursor.lockState == CursorLockMode.Locked;
-            set
-            {
-                Cursor.lockState = value ? CursorLockMode.Locked : CursorLockMode.None;
-                Cursor.visible = value == false;
-            }
+            initialPos = transform.position;
+            initialRot = transform.rotation;
+            zoomLimit.x = 15;
+            zoomLimit.y = 65;
         }
 
-        void OnEnable()
-        {
-            if (focusOnEnable) Focused = true;
-        }
-
-        void OnDisable() => Focused = false;
 
         void Update()
         {
-            // Input
-            //if (Focused)
-                UpdateInput();
-            //else if (Input.GetMouseButtonDown(0))
-                //Focused = true;
+            # region Camera Mode
+            
 
-            // Physics
-            velocity = Vector3.Lerp(velocity, Vector3.zero, dampingCoefficient * Time.deltaTime);
-            transform.position += velocity * Time.deltaTime;
-        }
+            # endregion
 
-        void UpdateInput()
-        {
-            // Position
-            velocity += GetAccelerationVector() * Time.deltaTime;
+            #region Movement
 
-            // Rotation
-            // Vector2 mouseDelta = lookSensitivity * new Vector2(Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
-            // Quaternion rotation = transform.rotation;
-            // Quaternion horiz = Quaternion.AngleAxis(mouseDelta.x, Vector3.up);
-            // Quaternion vert = Quaternion.AngleAxis(mouseDelta.y, Vector3.right);
-            // transform.rotation = horiz * rotation * vert;
+            panMovement = Vector3.zero;
 
-            // Leave cursor lock
-            if (Input.GetKeyDown(KeyCode.Escape))
-                Focused = false;
-        }
-
-        Vector3 GetAccelerationVector()
-        {
-            Vector3 moveInput = default;
-
-            void AddMovement(KeyCode key, Vector3 dir)
+            if (Input.GetKey(KeyCode.W) || Input.mousePosition.y >= Screen.height - ScreenEdgeBorderThickness)
             {
-                if (Input.GetKey(key))
-                    moveInput += dir;
+                panMovement += Vector3.forward * panSpeed * Time.deltaTime;
             }
 
-            AddMovement(KeyCode.W, Vector3.forward);
-            AddMovement(KeyCode.S, Vector3.back);
-            AddMovement(KeyCode.D, Vector3.right);
-            AddMovement(KeyCode.A, Vector3.left);
-            AddMovement(KeyCode.Space, Vector3.up);
-            AddMovement(KeyCode.LeftControl, Vector3.down);
-            Vector3 direction = transform.TransformVector(moveInput.normalized);
+            if (Input.GetKey(KeyCode.S) || Input.mousePosition.y <= ScreenEdgeBorderThickness)
+            {
+                panMovement -= Vector3.forward * panSpeed * Time.deltaTime;
+            }
 
-            if (Input.GetKey(KeyCode.LeftShift))
-                return direction * (acceleration * accSprintMultiplier); // "sprinting"
-            return direction * acceleration; // "walking"
+            if (Input.GetKey(KeyCode.A) || Input.mousePosition.x <= ScreenEdgeBorderThickness)
+            {
+                panMovement += Vector3.left * panSpeed * Time.deltaTime;
+            }
+
+            if (Input.GetKey(KeyCode.D) || Input.mousePosition.x >= Screen.width - ScreenEdgeBorderThickness)
+            {
+                panMovement += Vector3.right * panSpeed * Time.deltaTime;
+                //pos.x += panSpeed * Time.deltaTime;
+            }
+
+            if (Input.GetKey(KeyCode.Q))
+            {
+                panMovement += Vector3.up * panSpeed * Time.deltaTime;
+            }
+
+            if (Input.GetKey(KeyCode.E))
+            {
+                panMovement += Vector3.down * panSpeed * Time.deltaTime;
+            }
+            
+            transform.Translate(panMovement, Space.World);
+
+            //increase pan speed
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)
+                                        || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)
+                                        || Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.Q)
+                                        || Input.mousePosition.y >= Screen.height - ScreenEdgeBorderThickness
+                                        || Input.mousePosition.y <= ScreenEdgeBorderThickness
+                                        || Input.mousePosition.x <= ScreenEdgeBorderThickness
+                                        || Input.mousePosition.x >= Screen.width - ScreenEdgeBorderThickness)
+            {
+                panIncrease += Time.deltaTime / secToMaxSpeed;
+                panSpeed = Mathf.Lerp(minPanSpeed, maxPanSpeed, panIncrease);
+            }
+            else
+            {
+                panIncrease = 0;
+                panSpeed = minPanSpeed;
+            }
+
+            #endregion
+
+            #region Zoom
+
+            Camera.main.fieldOfView -= Input.mouseScrollDelta.y * zoomSpeed;
+            Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, zoomLimit.x, zoomLimit.y);
+
+            #endregion
+
+            #region mouse rotation
+
+            if (rotationEnabled)
+            {
+                // Mouse Rotation
+                if (Input.GetMouseButton(2))
+                {
+                    rotationActive = true;
+                    Vector3 mouseDelta;
+                    if (lastMousePosition.x >= 0 &&
+                        lastMousePosition.y >= 0 &&
+                        lastMousePosition.x <= Screen.width &&
+                        lastMousePosition.y <= Screen.height)
+                        mouseDelta = Input.mousePosition - lastMousePosition;
+                    else
+                    {
+                        mouseDelta = Vector3.zero;
+                    }
+
+                    var rotation = Vector3.up * Time.deltaTime * rotateSpeed * mouseDelta.x;
+                    rotation += Vector3.left * Time.deltaTime * rotateSpeed * mouseDelta.y;
+
+                    transform.Rotate(rotation, Space.World);
+
+                    // Make sure z rotation stays locked
+                    rotation = transform.rotation.eulerAngles;
+                    rotation.z = 0;
+                    transform.rotation = Quaternion.Euler(rotation);
+                }
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    rotationActive = false;
+                }
+
+                lastMousePosition = Input.mousePosition;
+            }
+
+            #endregion
+
+
+            #region boundaries
+
+            if (enableMovementLimits == true)
+            {
+                //movement limits
+                pos = transform.position;
+                pos.y = Mathf.Clamp(pos.y, heightLimit.x, heightLimit.y);
+                pos.z = Mathf.Clamp(pos.z, lenghtLimit.x, lenghtLimit.y);
+                pos.x = Mathf.Clamp(pos.x, widthLimit.x, widthLimit.y);
+                transform.position = pos;
+            }
+
+            #endregion
         }
     }
 }
