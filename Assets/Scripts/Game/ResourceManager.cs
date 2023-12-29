@@ -63,6 +63,11 @@ namespace Game
         }
 
 
+        public Dictionary<String, Resource> GetAllResources()
+        {
+            return _resources;
+        }
+        
         private void YearlyCycle(TimeManager.OnMonthChangeEventArgs args)
         {
             /*

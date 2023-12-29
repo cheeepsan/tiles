@@ -3,6 +3,9 @@ using Util;
 
 namespace BuildingNS
 {
+    /// <summary>
+    ///  essentially a config
+    /// </summary>
     public class Building
     {
         private GameObject _buildingObject; // can be nullable?

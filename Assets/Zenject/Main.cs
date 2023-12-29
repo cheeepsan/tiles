@@ -1,5 +1,6 @@
 using System;
 using BuildingNS;
+using Common.Logic;
 using GridNS;
 using ResourceNS;
 using SaveStateNS;
@@ -9,6 +10,7 @@ using Signals.ResourceNS;
 using Signals.StockpileNS;
 using Signals.UI;
 using TideNS;
+using Ui.Common;
 using UnitNS;
 using UnityEngine.UI;
 using Util;
@@ -28,6 +30,8 @@ namespace Game
             Container.Bind<BuildingManager>().AsSingle().NonLazy();
             Container.Bind<ResourceManager>().AsSingle().NonLazy();
             Container.Bind<StockpileManager>().AsSingle().NonLazy();
+            Container.Bind<OnClickHighlightLogic>().AsSingle().NonLazy();
+            
             Container.Bind<IInitializable>().To<TideManager>().AsSingle().NonLazy();
 
             Container.Bind<SaveState>().AsSingle().NonLazy();
@@ -50,6 +54,7 @@ namespace Game
             Container.DeclareSignal<AddAvailableFarmPlotSignal>();
             Container.DeclareSignal<UpdateResourcesViewSignal>();
             Container.DeclareSignal<ResourceDepleted>();
+            Container.DeclareSignal<BuildingInfoViewSignal>();
             
             Container.BindFactory<Object, PlaceableBuilding, PlaceableBuildingFactory>()
                 .FromFactory<PrefabFactory<PlaceableBuilding>>();
@@ -65,6 +70,7 @@ namespace Game
             Container.BindFactory<Object, Button, UiBuildingButtonFactory>().FromFactory<PrefabFactory<Button>>();
 
             Container.Bind<TimeManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            Container.Bind<HighlightRenderer>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
         }
 
     }

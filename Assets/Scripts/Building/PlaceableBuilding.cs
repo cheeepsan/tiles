@@ -1,23 +1,31 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Common.Enum;
+using Common.Interface;
+using Common.Logic;
 using Game;
 using ResourceNS;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
 using Signals.StockpileNS;
+using Signals.UI;
+using Ui.Common;
 using UnitNS;
 using UnityEngine;
 using Util;
 using Zenject;
 namespace BuildingNS
 {
-    public class PlaceableBuilding : MonoBehaviour
+    public class PlaceableBuilding : MonoBehaviour, IViewableInfo
     {
         [Inject] private readonly UnitFactory _unitFactory;
         [Inject] protected readonly ResourceSignals _resourceSignals;
         [Inject] protected readonly StockpileSignals _stockpileSignals;
-
+        [Inject] protected readonly UiSignals _uiSignals;
+        [Inject] protected readonly OnClickHighlightLogic _onClickHighlightService;
+        
         private int _builtPercentage = 0;
         private CfgBuilding _buildingConfig;
         private bool _isAvailable;
@@ -214,12 +222,33 @@ namespace BuildingNS
                 GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
             }
         }
+        public UiBuildingInfo CreateUiBuildingInfo()
+        {
+            string resourceInfo = $"Available: {IsAvailable()}";
+            string workerInfo = $"Total amount of workers: {_workers.Count}";
+            Vector3? workerPos = null;
+            
+            // just position of any worker
+            if (this._workers.Count > 0)
+            {
+                workerPos = this._workers.First().transform.position;
+            }
+            UiBuildingInfo info = new UiBuildingInfo(_id, _buildingConfig.name, GameEntityType.Building, workerInfo, resourceInfo, workerPos);
+            return info;
+        }
 
-        
         /*
          * TRIGGERS
          */
-        
+
+        public void OnMouseDown()
+        {
+            _onClickHighlightService.Highlight(this.gameObject);
+            UiBuildingInfo info = CreateUiBuildingInfo();
+            BuildingInfoViewSignal signal = new BuildingInfoViewSignal{buildingInfo = info};
+            _uiSignals.FireBuildingInfoViewSignal(signal);
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.layer != 6)

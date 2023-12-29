@@ -1,11 +1,15 @@
 
+using Common.Enum;
+using Common.Interface;
 using ResourceNS.Enum;
+using Signals.UI;
+using Ui.Common;
 using UnitNS;
 using UnityEngine;
 
 namespace ResourceNS
 {
-    public class Fruits : Resource
+    public class Fruits : Resource, IViewableInfo
     {
         private int _timeToGather = 10;
         
@@ -30,5 +34,20 @@ namespace ResourceNS
             yield = yield.Value + _yieldPerTick;
         }
 
+        public UiBuildingInfo CreateUiBuildingInfo()
+        {
+            string resourceInfo = $"Available: {IsAvailable()}, yield: {this.yield}," +
+                                  $" type: {this.resourceType}, Time to gather {this._timeToGather}";
+            UiBuildingInfo info = new UiBuildingInfo(this.resourceUuid, this.resourceType.ToString(),  GameEntityType.Resource, null, resourceInfo, null);
+            return info;
+        }
+
+        public void OnMouseDown()
+        {
+            _onClickHighlight.Highlight(this.gameObject);
+            UiBuildingInfo info = CreateUiBuildingInfo();
+            BuildingInfoViewSignal signal = new BuildingInfoViewSignal{buildingInfo = info};
+            _uiSignals.FireBuildingInfoViewSignal(signal);
+        }
     }
 }
