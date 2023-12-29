@@ -30,6 +30,11 @@ namespace Signals.UI
             _uiSignalBus.Fire(b);
         }
 
+        public void FireBuildingInfoViewSignal(BuildingInfoViewSignal b)
+        {
+            _uiSignalBus.Fire(b);
+        }
+        
         public void Subscribe<T>(Action<T> actionOnFire)
         {
             _uiSignalBus.Subscribe<T>(actionOnFire);

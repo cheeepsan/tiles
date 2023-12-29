@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+// TODO Lines is created on every tile prefab
 public class Lines : MonoBehaviour
 {
 
@@ -24,13 +25,12 @@ public class Lines : MonoBehaviour
     void Start()
     {
         //_grid = GetComponent<Grid>();
-        _lineRenderer = GetComponent<LineRenderer>();
-        
-        var offset = gameObject.transform.position;
-
-        var updatedPoints = points.Select(p => new Vector3(p.x + offset.x, p.y, p.z + offset.z)).ToArray();
-        _lineRenderer.SetPositions(updatedPoints);
-        _lineRenderer.loop = true;
+        //_lineRenderer = GetComponent<LineRenderer>();
+        //
+        //var offset = gameObject.transform.position;
+        //var updatedPoints = points.Select(p => new Vector3(p.x + offset.x, p.y, p.z + offset.z)).ToArray();
+        //_lineRenderer.SetPositions(updatedPoints);
+        //_lineRenderer.loop = true;
     }
     
 }

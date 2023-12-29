@@ -33,7 +33,8 @@ namespace Signals.ResourceNS
     {
         public Transform farmPlotTransform;
     }
-
+    
+    // TODO check naming, why not Signal
     public class ResourceDepleted : IResourceSignal
     {
         public Resource depletedResource;

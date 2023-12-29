@@ -2,14 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using BuildingNS;
+using Common.Enum;
+using Common.Interface;
 using Game;
 using ModestTree;
+using ResourceNS;
 using ResourceNS.Enum;
 using SaveStateNS;
 using Signals.Building;
 using Signals.ResourceNS;
 using Signals.UI;
 using TMPro;
+using Ui.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -20,8 +24,14 @@ using Button = UnityEngine.UI.Button;
 struct CurrentTimeViewContainer
 {
     public int currentTick;
-    public String currentMonthName;
+    public string currentMonthName;
     public int currentMonthIndex;
+}
+
+struct CurrentBuildingViewContainer
+{
+    public string id;
+    public GameEntityType type; 
 }
 
 public class UiRenderer : MonoBehaviour
@@ -30,6 +40,7 @@ public class UiRenderer : MonoBehaviour
     [Inject] private readonly UiSignals _uiSignalBus;
     [Inject] private readonly BuildingSignals _buildingSignalBus;
     [Inject] private readonly BuildingManager _buildingManager;
+    [Inject] private readonly ResourceManager _resourceManager;
     [Inject] private readonly UiBuildingButtonFactory _buildingButtonFactory;
     [Inject] private readonly SaveState _saveState;
     [Inject] private readonly TimeManager _timeManager;
@@ -40,14 +51,17 @@ public class UiRenderer : MonoBehaviour
     [SerializeField] public GameObject resourcesInfoPanel;
     [SerializeField] public GameObject timeInfoPanel;
     [SerializeField] public GameObject menuButtonPanel;
+    [SerializeField] public GameObject buildingViewPanel;
 
     private Dictionary<int, Button> buildingButtonDict;
 
     private TMP_Text _infoWindow;
     private TMP_Text _resourcesWindow;
     private TMP_Text _timeWindow;
-
-    private CurrentTimeViewContainer currentTime;
+    private TMP_Text _buildingViewWindow;
+    
+    private CurrentTimeViewContainer _currentTime;
+    private CurrentBuildingViewContainer? _currentBuilding; 
     
     void Start()
     {
@@ -126,7 +140,12 @@ public class UiRenderer : MonoBehaviour
         
         _timeWindow = timeInfoPanel.GetComponentInChildren<TMP_Text>();
         _timeWindow.SetText("Window ready: time");
+
+        _buildingViewWindow = buildingViewPanel.GetComponentInChildren<TMP_Text>();
+        _buildingViewWindow.SetText("Window info ready");
     }
+    
+    
     /*
      * TODO:
      *  This is a dangerous event, since it's being triggered by same action as SubscribeOnBuildingPlacedEvent in
@@ -163,10 +182,38 @@ public class UiRenderer : MonoBehaviour
         _resourcesWindow.SetText(data);
     }
 
-    private void UpdateTimeWindow(int tick, int month, String monthName)
+    private void UpdateTimeWindow(int tick, int month, string monthName)
     {
-        String data = $"Tick: {tick}, month {monthName}";
+        string data = $"Tick: {tick}, month {monthName}";
         _timeWindow.SetText(data);
+    }
+
+    private void UpdateBuildingViewInfoWindow(UiBuildingInfo buildingInfo)
+    {
+        if (!_currentBuilding.HasValue || _currentBuilding.HasValue && _currentBuilding.Value.id != buildingInfo.id)
+        {
+            _currentBuilding = new CurrentBuildingViewContainer()
+            {
+                id = buildingInfo.id,
+                type = buildingInfo.type
+            }; 
+        }
+        
+        string data = $"{buildingInfo.name}\n";
+
+        switch (buildingInfo.type)
+        {
+            case GameEntityType.Building:
+                data += $"{buildingInfo.workerInfo}\n";
+                break;
+            case GameEntityType.Resource:
+                data += $"{buildingInfo.resourceInfo}\n";
+                break;
+            default:
+                break;
+        }
+        
+        _buildingViewWindow.SetText(data);
     }
     
     private void SubscribeToSignals()
@@ -174,6 +221,7 @@ public class UiRenderer : MonoBehaviour
         SubscribeToBuildingSignals();
         SubscribeToResourceSignals();
         SubscribeToOnTick();
+        SubscribeToBuildingViewSignals();
     }
 
     private void SubscribeToResourceSignals()
@@ -188,14 +236,56 @@ public class UiRenderer : MonoBehaviour
         _buildingSignalBus.Subscribe<BuildingPlacedSignal>(onBuildingSignal);
     }
 
+    private void SubscribeToBuildingViewSignals()
+    {
+        _uiSignalBus.Subscribe<BuildingInfoViewSignal>(signal => UpdateBuildingViewInfoWindow(signal.buildingInfo));
+    }
+
+    // TODO this should be on demand, not on tick
+    private void UpdateBuildingInfoOnTick()
+    {
+        bool buildingIsSet = _currentBuilding.HasValue;
+        if (buildingIsSet)
+        {
+            CurrentBuildingViewContainer building = _currentBuilding.Value;
+            bool entityExists = false;
+            UiBuildingInfo buildingInfo = null;
+            switch (building.type)
+            {
+                case GameEntityType.Building:
+                    entityExists = _buildingManager.GetAllBuildings().TryGetValue(building.id, out PlaceableBuilding foundBuilding);
+                    if (entityExists && foundBuilding is IViewableInfo)
+                    {
+                        buildingInfo = ((IViewableInfo)foundBuilding).CreateUiBuildingInfo();
+                    }
+
+                    break;
+                case GameEntityType.Resource:
+                    entityExists = _resourceManager.GetAllResources().TryGetValue(building.id, out Resource foundResource);
+                    if (entityExists && foundResource is IViewableInfo)
+                    {
+                        buildingInfo = ((IViewableInfo)foundResource).CreateUiBuildingInfo();
+                    }
+                    break;
+                    
+            }
+
+            if (buildingInfo != null)
+            {
+                UpdateBuildingViewInfoWindow(buildingInfo);
+            }
+        }
+    }
+
     private void SubscribeToOnTick()
     {
         TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
         {
             int tick = args.currentTick;
             int month = args.month;
-            String monthName = args.monthName;
+            string monthName = args.monthName;
             
+            UpdateBuildingInfoOnTick();
             UpdateTimeWindow(tick, month, monthName);
         };
     }

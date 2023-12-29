@@ -1,6 +1,10 @@
+using Common.Enum;
+using Common.Interface;
 using ExceptionNS.Resource;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
+using Signals.UI;
+using Ui.Common;
 using UnitNS;
 using UnityEngine;
 
@@ -13,7 +17,7 @@ namespace ResourceNS
         Depleted
     }
     
-    public class FarmPlot : Resource
+    public class FarmPlot : Resource, IViewableInfo
     {
 
         private Camera _camera;
@@ -137,10 +141,28 @@ namespace ResourceNS
             base.ZeroYield();
 
         }
+
+        public UiBuildingInfo CreateUiBuildingInfo()
+        {
+            string resourceInfo = $"Available: {IsAvailable()}, yield: {this.yield}," +
+                                  $" type: {this.resourceType}, Time to gather {this._timeToGather}" +
+                                  $"max yield: {this._maxYield}";
+            
+            UiBuildingInfo info = new UiBuildingInfo(this.resourceUuid, this.resourceType.ToString(), GameEntityType.Resource, null, resourceInfo, null);
+            return info;
+        }
         
         public void OnDestroy()
         {
             
+        }
+        
+        public void OnMouseDown()
+        {
+            Debug.Log("Clicked on: " + this.resourceUuid + ", type: " + this.resourceType.Value);
+            UiBuildingInfo info = CreateUiBuildingInfo();
+            BuildingInfoViewSignal signal = new BuildingInfoViewSignal{buildingInfo = info};
+            _uiSignals.FireBuildingInfoViewSignal(signal);
         }
     }
 }

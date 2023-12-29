@@ -1,6 +1,9 @@
 using System;
+using Common.Logic;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
+using Signals.UI;
+using Ui.Common;
 using UnitNS;
 using UnityEngine;
 using Zenject;
@@ -11,8 +14,10 @@ namespace ResourceNS
     public class Resource : MonoBehaviour
     {
         [Inject] protected ResourceSignals _resourceSignals;
-
-        protected string resourceUuid;
+        [Inject] protected UiSignals _uiSignals;
+        [Inject] protected OnClickHighlightLogic _onClickHighlight;
+        
+        protected string resourceUuid; // TODO: Should be just id
         private bool _isAvailable;
         
         protected ResourceType? resourceType; // TODO: MOVE TO CONF
