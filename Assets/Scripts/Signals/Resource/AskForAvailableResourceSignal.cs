@@ -29,6 +29,12 @@ namespace Signals.ResourceNS
         public Tuple<ResourceType, float> resource;
     }
     
+    public class RetrieveResourceQueueSignal : IResourceSignal
+    {
+        public Tuple<ResourceType, float> resource;
+        public PlaceableBuilding building;
+    }
+    
     public class AddAvailableFarmPlotSignal : IResourceSignal
     {
         public Transform farmPlotTransform;

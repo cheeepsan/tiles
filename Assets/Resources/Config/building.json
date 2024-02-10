@@ -50,6 +50,18 @@
       "name": "farmer",
       "path": "Tiles/Creatures/Farmer"
     }
+  },
+  {
+    "id": 6,
+    "name": "Brickmaker",
+    "path": "Tiles/Buildings/Brickmaker",
+    "type": "brickmaker",
+    "constructPerTick": 5,
+    "prerequisite": [4],
+    "unit": {
+      "name": "brickmaker",
+      "path": "Tiles/Creatures/Brickmaker"
+    }
   }
 ]
   

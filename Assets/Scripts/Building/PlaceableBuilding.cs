@@ -13,9 +13,12 @@ using Signals.StockpileNS;
 using Signals.UI;
 using Ui.Common;
 using UnitNS;
+using Unity.VisualScripting;
 using UnityEngine;
 using Util;
 using Zenject;
+using Unit = UnitNS.Unit;
+
 namespace BuildingNS
 {
     public class PlaceableBuilding : MonoBehaviour, IViewableInfo
@@ -37,7 +40,10 @@ namespace BuildingNS
         private List<Unit> _workers; // todo change to array
 
         private string _id;
-            
+
+        private float _reservedResourceAmount;
+        protected float _toProduceResourceAmount; // TODO: Should be config
+        
         public bool canBuild;
  
         public ResourceType preferredResource;
@@ -49,6 +55,7 @@ namespace BuildingNS
             canBuild = true;
             _workers = new List<Unit>();
             _camera = Camera.main;
+            _reservedResourceAmount = 0; // TODO: is it really 0?
             if (_isLoaded)
             {
                 RestoredFromSaveState();
@@ -60,6 +67,7 @@ namespace BuildingNS
         private void RestoredFromSaveState()
         {
             InitiateOnBuilt();
+            Debug.LogWarning("This is now deprecated since load state does not account for reserved resource");
             TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
             {
                 BuildingOnTick();
@@ -139,9 +147,15 @@ namespace BuildingNS
 
         public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple)
         {
-            
+            Debug.Log("This is base class, there is no resource for this building");
         }
 
+        public virtual float GetResourceAmount()
+        {
+            Debug.Log("This is base class, there is no resource for this building");
+            return 0f;
+        }
+        
         public string GetBuildingType()
         {
             return _buildingConfig.type;
@@ -204,6 +218,32 @@ namespace BuildingNS
         {
             _isLoaded = isLoaded;
         }
+
+        public void AddReservedResourceAmount(float amount)
+        {
+            this._reservedResourceAmount += amount;
+        }
+        
+        public void DecreaseReservedResourceAmount(float amount)
+        {
+            this._reservedResourceAmount -= amount;
+        }
+        
+        public void SetReservedResourceAmount(float amount)
+        {
+            this._reservedResourceAmount = amount;
+        }
+        
+        public float GetReservedResourceAmount()
+        {
+            return this._reservedResourceAmount;
+        }
+
+        public float GetToProduceResourceAmount()
+        {
+            return this._toProduceResourceAmount;
+        }
+        
         
         /*
          * OTHER

@@ -86,5 +86,28 @@ namespace UnitNS
             //    }
             //}
         }
+        
+                
+        public void OnGUI()
+        {
+            Vector2 targetPos;
+            targetPos = _camera.WorldToScreenPoint(transform.position);
+
+            float yOffset = 60; // not fixed? 
+            float xOffset = 30;
+
+            if (_isAtResource || _isDisposingResources)
+            {
+                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20),
+                    _currentTick.ToString());
+            } else if (_creatingResource)
+            {
+                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20),"Making brick");
+            }
+            else
+            {
+                
+            }
+        }
     }
 }
