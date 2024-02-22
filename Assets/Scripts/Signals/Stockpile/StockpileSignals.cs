@@ -24,6 +24,16 @@ namespace Signals.StockpileNS
             _stockpileSignalBus.Fire(s);
         }
         
+        public void FireAddResourceRetrieveToQueue(RetrieveResourceQueueSignal s)
+        {
+            _stockpileSignalBus.Fire(s);
+        }
+
+        public void FireResourceAddedToQueueResponse(ResourceAddedToQueueResponseSignal r)
+        {
+            _stockpileSignalBus.Fire(r);
+        }
+        
         public void Subscribe<IResourceSignal>(Action<IResourceSignal> actionOnFire)
         {
             _stockpileSignalBus.Subscribe(actionOnFire);

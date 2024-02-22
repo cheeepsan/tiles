@@ -50,10 +50,15 @@ namespace Game
             Container.DeclareSignal<ResourceAvailableSignal>();
             Container.DeclareSignal<RegisterBuildingSignal>();
             Container.DeclareSignal<ResourceIsSetToBuildingSignal>();
+            
             Container.DeclareSignal<AddResourceToQueueSignal>();
+            Container.DeclareSignal<RetrieveResourceQueueSignal>();
             Container.DeclareSignal<AddAvailableFarmPlotSignal>();
+            Container.DeclareSignal<ResourceAddedToQueueResponseSignal>();
+            
             Container.DeclareSignal<UpdateResourcesViewSignal>();
             Container.DeclareSignal<ResourceDepleted>();
+            
             Container.DeclareSignal<BuildingInfoViewSignal>();
             
             Container.BindFactory<Object, PlaceableBuilding, PlaceableBuildingFactory>()

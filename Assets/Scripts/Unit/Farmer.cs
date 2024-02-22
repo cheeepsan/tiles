@@ -11,11 +11,7 @@ namespace UnitNS
         // TODO move to conf. How?
         private float _targetTimeToGather;
         private float _targetTimeToDisposeResources;
-        private float _currentTick;
-
-        private bool _isAtResource;
-        private bool _isDisposingResources;
-
+        
         private Tuple<ResourceType, float> _gatheredResourceAmount;
 
         public Farmer()
@@ -108,22 +104,28 @@ namespace UnitNS
                     // TODO remove not null
                     if (_gatheredResourceAmount != null)
                     {
-                        _parentBuilding.DisposeResources(_gatheredResourceAmount);
+                        _parentBuilding.DisposeResources(_gatheredResourceAmount, this);
                     }
 
                     _currentTick = 0f;
                     _isDisposingResources = false;
                     _currentResource.ZeroYield();
-                    _gatheredResourceAmount = Tuple.Create(ResourceType.Unknown, 0f);
-                    if (_currentResource != null && _currentResource.gameObject != null)
-                    {
-                        _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
-                    }
-                    else
-                    {
-                        _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
-                    }
+                    _gatheredResourceAmount = Tuple.Create(ResourceType.Unknown, 0f); }
+            }
+        }
+        
+        public override void NextStep()
+        {
+            if (_isDisposingResources == false && _atWork == false)
+            {
+                if (_currentResource != null && _currentResource.gameObject != null)
+                {
+                    _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
                 }
+                else
+                {
+                    _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
+                }   
             }
         }
 

@@ -5,6 +5,13 @@
     "path": "Tiles/Resources/FarmPlot",
     "type": "farm_plot",
     "constructPerTick": 100
+  },
+  {
+    "id": 2,
+    "name": "ClayPlot",
+    "path": "Tiles/Resources/ClayPlot",
+    "type": "clay_plot",
+    "constructPerTick": 0
   }
 ]
   

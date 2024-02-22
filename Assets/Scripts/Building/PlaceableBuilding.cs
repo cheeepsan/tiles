@@ -13,9 +13,12 @@ using Signals.StockpileNS;
 using Signals.UI;
 using Ui.Common;
 using UnitNS;
+using Unity.VisualScripting;
 using UnityEngine;
 using Util;
 using Zenject;
+using Unit = UnitNS.Unit;
+
 namespace BuildingNS
 {
     public class PlaceableBuilding : MonoBehaviour, IViewableInfo
@@ -27,17 +30,20 @@ namespace BuildingNS
         [Inject] protected readonly OnClickHighlightLogic _onClickHighlightService;
         
         private int _builtPercentage = 0;
-        private CfgBuilding _buildingConfig;
+        protected CfgBuilding _buildingConfig; // TODO change to buildingConfig
         private bool _isAvailable;
         private bool _isBuilding;
         private bool _isLoaded = false;
         private Camera _camera;
         
         private Resource _currentResource;
-        private List<Unit> _workers; // todo change to array
+        protected List<Unit> workers; // todo change to array
 
-        private string _id;
-            
+        protected string _id; // TODO change to id
+
+        private float _reservedResourceAmount;
+        protected float _toProduceResourceAmount; // TODO: Should be config
+        
         public bool canBuild;
  
         public ResourceType preferredResource;
@@ -47,8 +53,9 @@ namespace BuildingNS
         {
             _id = Guid.NewGuid().ToString();
             canBuild = true;
-            _workers = new List<Unit>();
+            workers = new List<Unit>();
             _camera = Camera.main;
+            _reservedResourceAmount = 0; // TODO: is it really 0?
             if (_isLoaded)
             {
                 RestoredFromSaveState();
@@ -60,6 +67,7 @@ namespace BuildingNS
         private void RestoredFromSaveState()
         {
             InitiateOnBuilt();
+            Debug.LogWarning("This is now deprecated since load state does not account for reserved resource");
             TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
             {
                 BuildingOnTick();
@@ -125,23 +133,39 @@ namespace BuildingNS
                 
                 unit.transform.position = parentPosition;
                 unit.SetParentBuilding(this);
-                _workers.Add(unit);
+                workers.Add(unit);
             }
         }
 
         private void SetWorkersToWork()
         {
-            foreach (var worker in _workers)
+            foreach (var worker in workers)
             {
-                worker.Work();
+                //worker.Work();
+                worker.NextStep();
             }
         }
 
-        public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple)
+        public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple, Unit unit)
         {
-            
+            Debug.Log("This is base class, there is no resource for this building");
         }
 
+        public virtual float GetResourceAmount()
+        {
+            Debug.Log("This is base class, there is no resource for this building");
+            return 0f;
+        }
+
+        public virtual void ResourceStoredToStockpile(Unit unit)
+        {
+            if (unit != null)
+            {
+                unit.NextStep();
+            }
+            //Debug.Log("This is base class, there is no resource for this building");
+        }
+        
         public string GetBuildingType()
         {
             return _buildingConfig.type;
@@ -187,11 +211,11 @@ namespace BuildingNS
 
             _isAvailable = false;
 
-            foreach (Unit worker in _workers)
+            foreach (Unit worker in workers)
             {
                 worker.SetCurrentResource(_currentResource);
             }
-
+            Debug.Log("Setting resources");
             SetWorkersToWork();
         }
 
@@ -204,6 +228,32 @@ namespace BuildingNS
         {
             _isLoaded = isLoaded;
         }
+
+        public void AddReservedResourceAmount(float amount)
+        {
+            this._reservedResourceAmount += amount;
+        }
+        
+        public void DecreaseReservedResourceAmount(float amount)
+        {
+            this._reservedResourceAmount -= amount;
+        }
+        
+        public void SetReservedResourceAmount(float amount)
+        {
+            this._reservedResourceAmount = amount;
+        }
+        
+        public float GetReservedResourceAmount()
+        {
+            return this._reservedResourceAmount;
+        }
+
+        public float GetToProduceResourceAmount()
+        {
+            return this._toProduceResourceAmount;
+        }
+        
         
         /*
          * OTHER
@@ -222,16 +272,16 @@ namespace BuildingNS
                 GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
             }
         }
-        public UiBuildingInfo CreateUiBuildingInfo()
+        public virtual UiBuildingInfo CreateUiBuildingInfo()
         {
             string resourceInfo = $"Available: {IsAvailable()}";
-            string workerInfo = $"Total amount of workers: {_workers.Count}";
+            string workerInfo = $"Total amount of workers: {workers.Count}";
             Vector3? workerPos = null;
             
             // just position of any worker
-            if (this._workers.Count > 0)
+            if (this.workers.Count > 0)
             {
-                workerPos = this._workers.First().transform.position;
+                workerPos = this.workers.First().transform.position;
             }
             UiBuildingInfo info = new UiBuildingInfo(_id, _buildingConfig.name, GameEntityType.Building, workerInfo, resourceInfo, workerPos);
             return info;

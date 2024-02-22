@@ -1,0 +1,117 @@
+<mxfile host="Electron" modified="2023-12-29T14:23:39.188Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.15 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="LbG2253nDpzR0Xvk58ru" version="22.1.15" type="device">
+  <diagram name="Page-1" id="BSFtrGHk0njn2uWN98NU">
+    <mxGraphModel dx="1292" dy="974" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="px9aadb_5LHT28f7PbPV-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-1" target="px9aadb_5LHT28f7PbPV-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-1" target="px9aadb_5LHT28f7PbPV-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-1" target="px9aadb_5LHT28f7PbPV-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-1" value="Palace" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-2" value="Small Farm" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-4" value="Brickmaker" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="380" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-7" value="Bricklayer" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="480" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-10" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="80" width="300" height="510" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-12" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="80" width="340" height="510" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-13" value="Basic buildings" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="90" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-14" value="Brick buildings" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="440" y="90" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-16" value="Hospital" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-17" value="Shrine" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="250" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-18" value="Mastaba" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="330" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-19" target="px9aadb_5LHT28f7PbPV-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-19" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=default;" vertex="1" parent="1">
+          <mxGeometry x="90" y="660" width="76" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-20" value="Prestige: 0" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="96" y="660" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-21" value="6 farms&lt;br&gt;0 priests" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="96" y="690" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-22" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=default;" vertex="1" parent="1">
+          <mxGeometry x="230" y="660" width="76" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-23" value="Prestige: 10" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="230" y="665" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-24" value="40 farms&lt;br&gt;2 priests" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="230" y="695" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-26" value="More farms, more food, more production" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="90" y="630" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-27" value="Buildings" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="85" y="48" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-28" value="Production" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="95" y="790" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-29">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="270" y="860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-29" value="Fruits" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="85" y="830" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-31" value="0.2 food / tick" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="830" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-32" target="px9aadb_5LHT28f7PbPV-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-32" value="Farm per full cycle" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="85" y="920" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-33" value="15 food" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="920" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-35" target="px9aadb_5LHT28f7PbPV-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-35" value="Brickmaker" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="85" y="1010" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="px9aadb_5LHT28f7PbPV-36" target="px9aadb_5LHT28f7PbPV-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-36" value="2 resource" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="1010" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="px9aadb_5LHT28f7PbPV-38" value="5 bricks / tick" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="1010" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

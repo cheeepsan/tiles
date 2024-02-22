@@ -1,8 +1,7 @@
 using System;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
-using Unity.VisualScripting;
-using UnityEngine;
+using UnitNS;
 
 namespace BuildingNS
 {
@@ -15,11 +14,16 @@ namespace BuildingNS
         }
         
         // TODO: DO BEFORE/AFTER Dispose in generic way
-        public override void DisposeResources(Tuple<ResourceType, float> resourceTuple)
+        public override void DisposeResources(Tuple<ResourceType, float> resourceTuple, Unit unit)
         {
             if (resourceTuple.Item2 > 0)
             {
-                _stockpileSignals.FireAddResourceToQueue(new AddResourceToQueueSignal() {resource =  resourceTuple});
+                _stockpileSignals.FireAddResourceToQueue(new AddResourceToQueueSignal()
+                {
+                    resource =  resourceTuple, 
+                    building = this,
+                    unit = unit
+                });
             }
 
 

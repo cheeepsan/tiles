@@ -3,7 +3,11 @@ namespace ResourceNS.Enum
     public enum ResourceType
     {
         Unknown,
+        // default resource
         Fruits,
-        Farm
+        Farm,
+        Clay,
+        // refined resource
+        Brick
     }
 }

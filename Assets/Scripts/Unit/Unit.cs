@@ -21,6 +21,11 @@ namespace UnitNS
         protected Camera _camera;
         protected bool _atWork;
 
+        protected bool _isAtResource;
+        protected bool _isDisposingResources;
+        protected bool _creatingResource;
+
+        protected float _currentTick;
         public void Start()
         {
             _camera = Camera.main;
@@ -86,5 +91,11 @@ namespace UnitNS
             //    }
             //}
         }
+
+        public virtual void NextStep()
+        {
+            
+        }
+        
     }
 }

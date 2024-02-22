@@ -101,7 +101,7 @@ namespace Game
 
                 }
 
-                // TODO JUST TESTING
+                
                 if (_tick % 40 == 0)
                 {
                     if (On40Tick != null)
