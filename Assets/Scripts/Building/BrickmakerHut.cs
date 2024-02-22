@@ -1,9 +1,13 @@
 using System;
+using System.Linq;
 using BuildingNS.Interface;
+using Common.Enum;
 using Game;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
+using Ui.Common;
 using UnitNS;
+using UnityEngine;
 using Zenject;
 
 namespace BuildingNS
@@ -61,6 +65,23 @@ namespace BuildingNS
         public override void ResourceStoredToStockpile(Unit unit)
         {
             
+        }
+        
+        public override UiBuildingInfo CreateUiBuildingInfo()
+        {
+            string resourceInfo = $"Available: {IsAvailable()}\n";
+            string workerInfo = $"Total amount of workers: {workers.Count}\n" +
+                                $"Reserved resource {preferredResource.ToString()} : {this.GetReservedResourceAmount()}";
+
+            Vector3? workerPos = null;
+            
+            // just position of any worker
+            if (this.workers.Count > 0)
+            {
+                workerPos = this.workers.First().transform.position;
+            }
+            UiBuildingInfo info = new UiBuildingInfo(_id, _buildingConfig.name, GameEntityType.Building, workerInfo, resourceInfo, workerPos);
+            return info;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace BuildingNS
         [Inject] protected readonly OnClickHighlightLogic _onClickHighlightService;
         
         private int _builtPercentage = 0;
-        private CfgBuilding _buildingConfig;
+        protected CfgBuilding _buildingConfig; // TODO change to buildingConfig
         private bool _isAvailable;
         private bool _isBuilding;
         private bool _isLoaded = false;
@@ -39,7 +39,7 @@ namespace BuildingNS
         private Resource _currentResource;
         protected List<Unit> workers; // todo change to array
 
-        private string _id;
+        protected string _id; // TODO change to id
 
         private float _reservedResourceAmount;
         protected float _toProduceResourceAmount; // TODO: Should be config
@@ -272,7 +272,7 @@ namespace BuildingNS
                 GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20), _builtPercentage + "/" + 100);
             }
         }
-        public UiBuildingInfo CreateUiBuildingInfo()
+        public virtual UiBuildingInfo CreateUiBuildingInfo()
         {
             string resourceInfo = $"Available: {IsAvailable()}";
             string workerInfo = $"Total amount of workers: {workers.Count}";

@@ -1,8 +1,6 @@
 using System;
-using BuildingNS;
 using Game;
 using ResourceNS.Enum;
-using Signals.ResourceNS;
 using UnityEngine;
 
 namespace UnitNS
