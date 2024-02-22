@@ -37,7 +37,7 @@ namespace BuildingNS
         private Camera _camera;
         
         private Resource _currentResource;
-        private List<Unit> _workers; // todo change to array
+        protected List<Unit> workers; // todo change to array
 
         private string _id;
 
@@ -53,7 +53,7 @@ namespace BuildingNS
         {
             _id = Guid.NewGuid().ToString();
             canBuild = true;
-            _workers = new List<Unit>();
+            workers = new List<Unit>();
             _camera = Camera.main;
             _reservedResourceAmount = 0; // TODO: is it really 0?
             if (_isLoaded)
@@ -133,19 +133,20 @@ namespace BuildingNS
                 
                 unit.transform.position = parentPosition;
                 unit.SetParentBuilding(this);
-                _workers.Add(unit);
+                workers.Add(unit);
             }
         }
 
         private void SetWorkersToWork()
         {
-            foreach (var worker in _workers)
+            foreach (var worker in workers)
             {
-                worker.Work();
+                //worker.Work();
+                worker.NextStep();
             }
         }
 
-        public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple)
+        public virtual void DisposeResources(Tuple<ResourceType, float> resourceTuple, Unit unit)
         {
             Debug.Log("This is base class, there is no resource for this building");
         }
@@ -154,6 +155,15 @@ namespace BuildingNS
         {
             Debug.Log("This is base class, there is no resource for this building");
             return 0f;
+        }
+
+        public virtual void ResourceStoredToStockpile(Unit unit)
+        {
+            if (unit != null)
+            {
+                unit.NextStep();
+            }
+            //Debug.Log("This is base class, there is no resource for this building");
         }
         
         public string GetBuildingType()
@@ -201,11 +211,11 @@ namespace BuildingNS
 
             _isAvailable = false;
 
-            foreach (Unit worker in _workers)
+            foreach (Unit worker in workers)
             {
                 worker.SetCurrentResource(_currentResource);
             }
-
+            Debug.Log("Setting resources");
             SetWorkersToWork();
         }
 
@@ -265,13 +275,13 @@ namespace BuildingNS
         public UiBuildingInfo CreateUiBuildingInfo()
         {
             string resourceInfo = $"Available: {IsAvailable()}";
-            string workerInfo = $"Total amount of workers: {_workers.Count}";
+            string workerInfo = $"Total amount of workers: {workers.Count}";
             Vector3? workerPos = null;
             
             // just position of any worker
-            if (this._workers.Count > 0)
+            if (this.workers.Count > 0)
             {
-                workerPos = this._workers.First().transform.position;
+                workerPos = this.workers.First().transform.position;
             }
             UiBuildingInfo info = new UiBuildingInfo(_id, _buildingConfig.name, GameEntityType.Building, workerInfo, resourceInfo, workerPos);
             return info;

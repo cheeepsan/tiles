@@ -54,6 +54,7 @@ namespace Game
             Container.DeclareSignal<AddResourceToQueueSignal>();
             Container.DeclareSignal<RetrieveResourceQueueSignal>();
             Container.DeclareSignal<AddAvailableFarmPlotSignal>();
+            Container.DeclareSignal<ResourceAddedToQueueResponseSignal>();
             
             Container.DeclareSignal<UpdateResourcesViewSignal>();
             Container.DeclareSignal<ResourceDepleted>();

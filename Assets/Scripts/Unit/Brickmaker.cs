@@ -12,13 +12,9 @@ namespace UnitNS
         // TODO move to conf. How?
         private float _targetTimeToGather;
         private float _targetTimeToDisposeResources;
-        private float _currentTick;
         private float _targetTimeToCreateSubresource;
         
-        protected bool _isAtResource;
-        protected bool _isDisposingResources;
-        protected bool _creatingResource;
-
+    
         private Tuple<ResourceType, float> _gatheredResourceAmount;
 
         public Brickmaker()
@@ -30,7 +26,7 @@ namespace UnitNS
             _isDisposingResources = false;
             _creatingResource = false;
 
-            _targetTimeToCreateSubresource = 15;
+            _targetTimeToCreateSubresource = 20;
             
             TimeManager.OnTick += delegate(object sender, TimeManager.OnTickEventArgs args)
             {
@@ -44,7 +40,7 @@ namespace UnitNS
         {
             if (_currentResource != null && _currentResource.gameObject != null && !_atWork)
             {
-                Debug.Log("Resource pos: " + _currentResource.gameObject.transform.position);
+                Debug.Log("START work: Resource pos: " + _currentResource.gameObject.transform.position);
                 _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
 
                 _atWork = true;
@@ -101,10 +97,9 @@ namespace UnitNS
                     // TODO remove not null
                     if (_gatheredResourceAmount != null)
                     {
-                        _parentBuilding.DisposeResources(_gatheredResourceAmount);
+                        _parentBuilding.DisposeResources(_gatheredResourceAmount, this);
                     }
-
-                    _isDisposingResources = false;
+                    
                     _currentResource.ZeroYield();
                     
                     _currentTick = 0f;
@@ -115,19 +110,10 @@ namespace UnitNS
                     {
                         _parentBuilding.DecreaseReservedResourceAmount(_parentBuilding.GetToProduceResourceAmount());
                         _creatingResource = true;
+                        
                     }
-
-                    if (!_creatingResource)
-                    {
-                        if (_currentResource != null && _currentResource.gameObject != null)
-                        {
-                            _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
-                        }
-                        else
-                        {
-                            _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
-                        }   
-                    }
+                    
+                    _isDisposingResources = false;
                 }
             }
         }
@@ -143,25 +129,52 @@ namespace UnitNS
                 else
                 {
 
-
                     _currentTick = 0f;
                     Debug.Log("Added brick");
+
+                    _parentBuilding.DisposeResources(Tuple.Create(ResourceType.Brick, 2f), this);
+
                     _creatingResource = false;
-                    _resourceSignals.FireAddResourceToQueue(new AddResourceToQueueSignal()
-                    {
-                        resource = Tuple.Create(ResourceType.Brick, 2f)
-                    });
-                    if (_currentResource != null && _currentResource.gameObject != null)
-                    {
-                        _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
-                    }
-                    else
-                    {
-                        _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
-                    }   
+
                 }
             }
         }
 
+        public override void NextStep()
+        {
+            if (_creatingResource == false && _isDisposingResources == false && _atWork == false)
+            {
+                if (_currentResource != null && _currentResource.gameObject != null)
+                {
+                    _myNavMeshAgent.SetDestination(_currentResource.gameObject.transform.position);
+                }
+                else
+                {
+                    _myNavMeshAgent.SetDestination(_parentBuilding.gameObject.transform.position);
+                }   
+            }
+        }
+        
+        public void OnGUI()
+        {
+            Vector2 targetPos;
+            targetPos = _camera.WorldToScreenPoint(transform.position);
+
+            float yOffset = 60; // not fixed? 
+            float xOffset = 30;
+
+            if (_isAtResource || _isDisposingResources)
+            {
+                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20),
+                    _currentTick.ToString());
+            } else if (_creatingResource)
+            {
+                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20),"Making brick");
+            }
+            else
+            {
+                
+            }
+        }
     }
 }

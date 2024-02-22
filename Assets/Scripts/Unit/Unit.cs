@@ -21,6 +21,11 @@ namespace UnitNS
         protected Camera _camera;
         protected bool _atWork;
 
+        protected bool _isAtResource;
+        protected bool _isDisposingResources;
+        protected bool _creatingResource;
+
+        protected float _currentTick;
         public void Start()
         {
             _camera = Camera.main;
@@ -86,28 +91,11 @@ namespace UnitNS
             //    }
             //}
         }
-        
-                
-        public void OnGUI()
+
+        public virtual void NextStep()
         {
-            Vector2 targetPos;
-            targetPos = _camera.WorldToScreenPoint(transform.position);
-
-            float yOffset = 60; // not fixed? 
-            float xOffset = 30;
-
-            if (_isAtResource || _isDisposingResources)
-            {
-                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20),
-                    _currentTick.ToString());
-            } else if (_creatingResource)
-            {
-                GUI.Box(new Rect(targetPos.x - xOffset, Screen.height - targetPos.y - yOffset, 60, 20),"Making brick");
-            }
-            else
-            {
-                
-            }
+            
         }
+        
     }
 }

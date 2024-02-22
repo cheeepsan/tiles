@@ -6,6 +6,7 @@ using ResourceNS.Enum;
 using Signals.ResourceNS;
 using Signals.StockpileNS;
 using Signals.UI;
+using UnitNS;
 using Zenject;
 
 namespace Game
@@ -17,15 +18,15 @@ namespace Game
         private readonly StockpileSignals _stockpileSignals;
         
         private Dictionary<ResourceType, float> _accumulatedResources;
-        private Queue<Tuple<ResourceType, float>> _storingQueue;
-        private Queue<RetrieveResourceQueueSignalStruct> _retrieveQueue;
+        private Queue<ResourceOperationQueueSignalStruct> _storingQueue;
+        private Queue<ResourceOperationQueueSignalStruct> _retrieveQueue;
 
         public StockpileManager(StockpileSignals stockpileSignals)
         {
             _stockpileSignals = stockpileSignals;
             _accumulatedResources = new Dictionary<ResourceType, float>();
-            _storingQueue = new Queue<Tuple<ResourceType, float>>(); 
-            _retrieveQueue = new Queue<RetrieveResourceQueueSignalStruct>(); 
+            _storingQueue = new Queue<ResourceOperationQueueSignalStruct>(); 
+            _retrieveQueue = new Queue<ResourceOperationQueueSignalStruct>(); 
             
             TimeManager.On10Tick += delegate(object sender, TimeManager.On10TickEventArgs args)
             {
@@ -36,14 +37,14 @@ namespace Game
             SubscribeToRetrieveResourceQueue();
         }
         
-        private void AddResourceToQueue(Tuple<ResourceType, float> r)
+        private void AddResourceToQueue(Tuple<ResourceType, float> r,  PlaceableBuilding b, Unit u)
         {
-            _storingQueue.Enqueue(r);
+            _storingQueue.Enqueue(new ResourceOperationQueueSignalStruct(r, b, u));
         }
         
         private void AddRequestToRetrieveQueue(Tuple<ResourceType, float> r, PlaceableBuilding b)
         {
-            _retrieveQueue.Enqueue(new RetrieveResourceQueueSignalStruct(r, b));
+            _retrieveQueue.Enqueue(new ResourceOperationQueueSignalStruct(r, b));
         }
 
         // should below computation be blocked so no overlaps would occur?
@@ -54,18 +55,23 @@ namespace Game
             {
                 while (_storingQueue.Count > 0)
                 {
-                    Tuple<ResourceType, float> element = _storingQueue.Dequeue();
-                    if (_accumulatedResources.ContainsKey(element.Item1))
+                    ResourceOperationQueueSignalStruct element = _storingQueue.Dequeue();
+                    
+                    PlaceableBuilding building = element.GetBuilding();
+                    Tuple<ResourceType, float> resourceData = element.GetResource();
+                    
+                    if (_accumulatedResources.ContainsKey(resourceData.Item1))
                     {
-                        if (_accumulatedResources.TryGetValue(element.Item1, out float resourceValue))
+                        if (_accumulatedResources.TryGetValue(resourceData.Item1, out float resourceValue))
                         {
-                            _accumulatedResources[element.Item1] = resourceValue + element.Item2;
+                            _accumulatedResources[resourceData.Item1] = resourceValue + resourceData.Item2;
                         }
                     }
                     else
                     {
-                        _accumulatedResources.Add(element.Item1, element.Item2);
+                        _accumulatedResources.Add(resourceData.Item1, resourceData.Item2);
                     }
+                    building.ResourceStoredToStockpile(element.GetUnit());
                 }
 
                 _uiSignals.FireUpdateResourcesViewSignal(new UpdateResourcesViewSignal()
@@ -77,7 +83,7 @@ namespace Game
             {
                 while (_retrieveQueue.Count > 0)
                 {
-                    RetrieveResourceQueueSignalStruct element = _retrieveQueue.Dequeue();
+                    ResourceOperationQueueSignalStruct element = _retrieveQueue.Dequeue();
                     Tuple<ResourceType, float> resourceData = element.GetResource();
                     if (_accumulatedResources.ContainsKey(resourceData.Item1))
                     {
@@ -97,7 +103,7 @@ namespace Game
         private void SubscribeToAddResourceToQueue()
         {
             _stockpileSignals.Subscribe<AddResourceToQueueSignal>
-                ((x) => { AddResourceToQueue(x.resource); });
+                ((x) => { AddResourceToQueue(x.resource, x.building, x.unit); });
         }
         
         private void SubscribeToRetrieveResourceQueue()

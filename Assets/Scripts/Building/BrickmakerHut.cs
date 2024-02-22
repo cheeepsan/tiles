@@ -3,17 +3,15 @@ using BuildingNS.Interface;
 using Game;
 using ResourceNS.Enum;
 using Signals.ResourceNS;
-using Unity.VisualScripting;
-using UnityEngine;
+using UnitNS;
 using Zenject;
 
 namespace BuildingNS
 {
     public class BrickmakerHut : PlaceableBuilding, IProducingBuilding
     {
-
         [Inject] private StockpileManager _stockpileManager;
-        
+
         public override void Start()
         {
             base.Start();
@@ -24,7 +22,7 @@ namespace BuildingNS
                 PollToReserveResource();
             };
         }
-        
+
         public override float GetResourceAmount()
         {
             return _stockpileManager.GetResourceAmount(this.preferredResource);
@@ -32,17 +30,23 @@ namespace BuildingNS
 
         public void PollToReserveResource()
         {
-            Tuple<ResourceType, float> r = new Tuple<ResourceType, float>(this.preferredResource, 5); 
-            _stockpileSignals.FireAddResourceRetrieveToQueue( new RetrieveResourceQueueSignal() { resource = r,  building = this}) ;
+            Tuple<ResourceType, float> r = new Tuple<ResourceType, float>(this.preferredResource, 5);
+            _stockpileSignals.FireAddResourceRetrieveToQueue(new RetrieveResourceQueueSignal()
+                { resource = r, building = this });
         }
-        
-        
+
+
         // TODO: DO BEFORE/AFTER Dispose in generic way
-        public override void DisposeResources(Tuple<ResourceType, float> resourceTuple)
+        public override void DisposeResources(Tuple<ResourceType, float> resourceTuple, Unit unit)
         {
             if (resourceTuple.Item2 > 0)
             {
-                _stockpileSignals.FireAddResourceToQueue(new AddResourceToQueueSignal() {resource =  resourceTuple});
+                _stockpileSignals.FireAddResourceToQueue(new AddResourceToQueueSignal()
+                {
+                    resource =  resourceTuple, 
+                    building = this,
+                    unit = unit
+                });
             }
 
 
@@ -50,8 +54,13 @@ namespace BuildingNS
             {
                 this.GetCurrentResource().SetAvailable(true);
             }
-            
+
             this.SetAvailable(true); // ?????
+        }
+
+        public override void ResourceStoredToStockpile(Unit unit)
+        {
+            
         }
     }
 }
