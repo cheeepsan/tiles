@@ -74,3 +74,13 @@ crashlytics-build.properties
 #Zenject
 /[Aa]ssets/Plugins/Zenject
 /[Aa]ssets/TextMesh Pro
+
+#Egypt
+/[Aa]ssets/Ancient Egypt Pack - Low Poly (HA)
+/[Aa]ssets/Ancient Egypt Pack - Low Poly (HA).meta
+
+#idea
+/.idea/*
+
+#nuget
+/[Aa]ssets/Packages/*
