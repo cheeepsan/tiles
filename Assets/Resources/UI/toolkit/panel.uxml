@@ -1,0 +1,37 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="panel.uss" />
+    <ui:VisualElement name="hud" class="hud" picking-mode="Ignore">
+        <ui:VisualElement name="TopBar" class="top-bar" picking-mode="Ignore">
+            <ui:VisualElement name="TimePanel" class="hud-panel hud-panel--wide" picking-mode="Position">
+                <ui:Label name="TimeTitle" class="panel-title" text="Time" />
+                <ui:Label name="TimeLabel" class="info-text" text="Window ready: time" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        
+        <ui:VisualElement name="SideColumn" class="side-column" picking-mode="Ignore">
+            <ui:VisualElement name="ResourcesPanel" class="hud-panel" picking-mode="Position">
+                <ui:Label name="ResourcesTitle" class="panel-title" text="Resources" />
+                <ui:Label name="ResourcesLabel" class="info-text" text="Window ready: resources" />
+            </ui:VisualElement>
+            
+            <ui:VisualElement name="BuildingInfoPanel" class="hud-panel" picking-mode="Position">
+                <ui:Label name="BuildingInfoTitle" class="panel-title" text="Buildings" />
+                <ui:Label name="BuildingInfoLabel" class="info-text" text="Window ready: buildings" />
+            </ui:VisualElement>
+            
+            <ui:VisualElement name="BuildingViewPanel" class="hud-panel" picking-mode="Position">
+                <ui:Label name="BuildingViewTitle" class="panel-title" text="Selection" />
+                <ui:Label name="BuildingViewLabel" class="info-text" text="Window info ready" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="BottomBar" class="bottom-bar" picking-mode="Ignore">
+            <ui:VisualElement name="BuildingButtonPanel" class="hud-panel hud-panel--grow button-row" picking-mode="Position" />
+            <ui:VisualElement name="MenuButtonPanel" class="hud-panel button-row" picking-mode="Position">
+                <ui:Button name="SaveButton" text="Save" class="hud-button" />
+                <ui:Button name="LoadButton" text="Load" class="hud-button" />
+                <ui:Button name="PauseButton" text="Pause" class="hud-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

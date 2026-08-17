@@ -12,7 +12,6 @@ using Signals.UI;
 using TideNS;
 using Ui.Common;
 using UnitNS;
-using UnityEngine.UI;
 using Util;
 using Object = UnityEngine.Object;
 
@@ -71,8 +70,6 @@ namespace Game
                 .FromFactory<PrefabFactory<TideMesh>>();
             
             Container.BindFactory<Object, Unit, UnitFactory>().FromFactory<PrefabFactory<Unit>>();
-            
-            Container.BindFactory<Object, Button, UiBuildingButtonFactory>().FromFactory<PrefabFactory<Button>>();
 
             Container.Bind<TimeManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
             Container.Bind<HighlightRenderer>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();

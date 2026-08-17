@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -9,7 +8,6 @@ namespace Util
     {
         private List<CfgBuilding> _buildings;
         private List<CfgBuilding> _worldObjects;
-        private Dictionary<CfgUiElementsEnum, CfgUi> _ui;
         private Settings _settings;
 
         public Configuration()
@@ -19,9 +17,6 @@ namespace Util
             
             TextAsset worldObjectsConf = Resources.Load<TextAsset>("Config/world-objects");
             _worldObjects = JsonConvert.DeserializeObject<List<CfgBuilding>>(worldObjectsConf.text);
-            
-            TextAsset uiConf = Resources.Load<TextAsset>("Config/ui");
-            _ui = JsonConvert.DeserializeObject<Dictionary<CfgUiElementsEnum, CfgUi>>(uiConf.text);
             
             TextAsset settingsConf = Resources.Load<TextAsset>("Config/settings");
             _settings = JsonConvert.DeserializeObject<Settings>(settingsConf.text);
@@ -40,11 +35,6 @@ namespace Util
         public List<CfgBuilding> GetCfgWorldObjectsList()
         {
             return _worldObjects;
-        }
-        
-        public Dictionary<CfgUiElementsEnum, CfgUi> GetUIConfiguration()
-        {
-            return _ui;
         }
     }
     
